@@ -1,6 +1,8 @@
 package router
 
 import (
+	"kialkuz/shop-with-loyalty/internal/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,6 +12,8 @@ type RouteRegistrar interface {
 
 func Init(handlers ...RouteRegistrar) *gin.Engine {
 	router := gin.New()
+
+	router.Use(middleware.WithLogging)
 
 	api := router.Group("/api")
 

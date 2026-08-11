@@ -1,13 +1,13 @@
 package service
 
 import (
-	"kialkuz/gophermart/internal/infrastructure/repository/db"
+	"kialkuz/shop-with-loyalty/internal/contracts/repository"
 )
 
 type BalanceService struct {
-	repository *db.BalanceRepository
+	repository repository.BalanceRepository
 }
 
-func NewBalanceService(repository *db.BalanceRepository) *BalanceService {
+func NewBalanceService(repository repository.BalanceRepository) *BalanceService {
 	return &BalanceService{repository: repository}
 }

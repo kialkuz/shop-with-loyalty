@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"kialkuz/gophermart/internal/service"
+	"kialkuz/shop-with-loyalty/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

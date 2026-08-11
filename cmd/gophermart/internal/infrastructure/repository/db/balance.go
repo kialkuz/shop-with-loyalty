@@ -1,7 +1,7 @@
 package db
 
 import (
-	"kialkuz/gophermart/internal/infrastructure/storage"
+	"kialkuz/shop-with-loyalty/internal/infrastructure/storage"
 )
 
 type BalanceRepository struct {

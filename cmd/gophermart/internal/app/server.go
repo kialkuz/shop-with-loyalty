@@ -1,21 +1,20 @@
 package app
 
 import (
-	"kialkuz/gophermart/internal/config"
-	"kialkuz/gophermart/internal/handler"
-	"kialkuz/gophermart/internal/router"
+	"kialkuz/shop-with-loyalty/internal/config"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-func NewServer(handler *handler.Handler, config *config.Config) *http.Server {
+func NewServer(
+	config *config.Config,
+	router *gin.Engine,
+) *http.Server {
 	return &http.Server{
-		Addr: ":" + config.ServerPort,
-		Handler: router.Init(
-			handler.Auth,
-			handler.Balance,
-			handler.Orders,
-		),
+		Addr:         ":" + config.ServerPort,
+		Handler:      router,
 		ReadTimeout:  time.Duration(5 * time.Second),
 		WriteTimeout: time.Duration(10 * time.Second),
 		IdleTimeout:  time.Duration(15 * time.Second),

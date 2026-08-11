@@ -3,41 +3,58 @@ package app
 import (
 	"context"
 
-	"kialkuz/gophermart/internal/config"
-	"kialkuz/gophermart/internal/infrastructure/repository/db"
-	"kialkuz/gophermart/internal/infrastructure/storage"
-	"kialkuz/gophermart/internal/service"
+	"kialkuz/shop-with-loyalty/internal/config"
+	"kialkuz/shop-with-loyalty/internal/infrastructure/repository/db"
+	"kialkuz/shop-with-loyalty/internal/infrastructure/storage"
+	"kialkuz/shop-with-loyalty/internal/middleware"
+	"kialkuz/shop-with-loyalty/internal/router"
+	"kialkuz/shop-with-loyalty/internal/service"
 
-	// "kialkuz/gophermart/internal/model"
-	"kialkuz/gophermart/internal/handler"
-	// pkgContracts "kialkuz/service-metrics-and-alerting/pkg/contracts"
+	"kialkuz/shop-with-loyalty/internal/handler"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
-
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"go.uber.org/zap"
 )
 
 type App struct {
-	Handler *handler.Handler
-	Pool    *pgxpool.Pool
+	Router *gin.Engine
+	Pool   *pgxpool.Pool
 }
 
-func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
-	pool, err := pgxpool.New(ctx, cfg.DB.DatabaseURI)
-	if err != nil {
-		return nil, err
-	}
-
+func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, config *config.Config) (*App, error) {
 	dbStorage := storage.NewDB(pool)
 
-	handler := handler.NewHandler(
-		service.NewAuthService(db.NewUsersRepository(dbStorage)),
+	transactionManager := db.NewTransactionManager(pool)
+
+	userRepository := db.NewUserRepository(dbStorage)
+	userService := service.NewUserService(userRepository)
+
+	authService := service.NewAuthService(db.NewTokenRepository(dbStorage), userRepository, transactionManager)
+
+	appHandler := handler.NewHandler(
+		config,
+		authService,
 		service.NewBalanceService(db.NewBalanceRepository(dbStorage)),
-		service.NewOrdersService(db.NewOrdersRepository(dbStorage)),
+		service.NewOrderService(db.NewOrderRepository(dbStorage)),
+		userService,
+	)
+
+	router := router.Init(
+		[]router.PublicRouteRegistrar{
+			appHandler.Auth,
+		},
+		[]router.ProtectedRouteRegistrar{
+			appHandler.Balance,
+			appHandler.Orders,
+		},
+		sugar,
+		middleware.WithAuth(authService, config.SecretKey),
 	)
 
 	return &App{
-		Handler: handler,
-		Pool:    pool,
+		Router: router,
+		Pool:   pool,
 	}, nil
 }

@@ -4,19 +4,21 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/caarlos0/env/v6"
+	"github.com/caarlos0/env/v11"
 )
 
 const (
-	defaultRunAddress           = "postgres"
-	defaultDatabaseURI          = "localhost:8080"
+	defaultRunAddress           = "localhost:8080"
+	defaultDatabaseURI          = ""
 	defaultAccrualSystemAddress = ""
+	defaultSecretKey            = ""
 )
 
 type incomingParams struct {
 	RunAddress           string `env:"RUN_ADDRESS"`
 	DatabaseURI          string `env:"DATABASE_URI"`
 	AccrualSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	SecretKey            string `env:"SECRET_KEY"`
 }
 
 func GetIncomingParams() (*incomingParams, error) {
@@ -24,11 +26,13 @@ func GetIncomingParams() (*incomingParams, error) {
 		RunAddress:           defaultRunAddress,
 		DatabaseURI:          defaultDatabaseURI,
 		AccrualSystemAddress: defaultAccrualSystemAddress,
+		SecretKey:            defaultSecretKey,
 	}
 
 	flag.StringVar(&cfg.RunAddress, "a", cfg.RunAddress, "Server address")
 	flag.StringVar(&cfg.DatabaseURI, "d", cfg.DatabaseURI, "Database address")
 	flag.StringVar(&cfg.AccrualSystemAddress, "r", cfg.AccrualSystemAddress, "Accrual address")
+	flag.StringVar(&cfg.SecretKey, "k", cfg.SecretKey, "Secret key")
 	flag.Parse()
 
 	err := env.Parse(cfg)

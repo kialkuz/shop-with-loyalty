@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"kialkuz/gophermart/pkg/pgerrors"
+	"kialkuz/shop-with-loyalty/pkg/pgerrors"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -36,4 +36,14 @@ func (db *DB) QueryRow(
 	row := db.pool.QueryRow(ctx, sql, args...)
 
 	return scan(row)
+}
+
+func (db *DB) QueryRows(
+	ctx context.Context,
+	sql string,
+	args ...any,
+) (pgx.Rows, error) {
+	rows, err := db.pool.Query(ctx, sql, args...)
+
+	return rows, err
 }

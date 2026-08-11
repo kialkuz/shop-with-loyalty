@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"kialkuz/gophermart/internal/service"
+	"kialkuz/shop-with-loyalty/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +10,7 @@ type OrdersHandler struct {
 }
 
 func NewOrdersHandler(
-	service *service.OrdersService,
+	service *service.OrderService,
 ) *OrdersHandler {
 	return &OrdersHandler{}
 }

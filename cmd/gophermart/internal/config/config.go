@@ -3,8 +3,7 @@ package config
 import (
 	"strings"
 
-	"kialkuz/gophermart/internal/config/db"
-	"kialkuz/gophermart/internal/infrastructure/env"
+	"kialkuz/shop-with-loyalty/internal/config/db"
 )
 
 type Config struct {
@@ -13,14 +12,10 @@ type Config struct {
 	DB                db.Config
 	AccrualServerHost string
 	AccrualServerPort string
+	SecretKey         string
 }
 
 func NewConfig() (*Config, error) {
-	err := env.Load()
-	if err != nil {
-		return nil, err
-	}
-
 	config, err := GetIncomingParams()
 	if err != nil {
 		return nil, err
@@ -35,5 +30,6 @@ func NewConfig() (*Config, error) {
 		DB:                *db.NewConfig(config.DatabaseURI),
 		AccrualServerHost: accrualAddressParts[0],
 		AccrualServerPort: accrualAddressParts[1],
+		SecretKey:         config.SecretKey,
 	}, nil
 }
