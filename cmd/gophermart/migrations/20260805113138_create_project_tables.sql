@@ -40,6 +40,17 @@ CREATE TABLE IF NOT EXISTS public.orders (
 );
 CREATE INDEX orders_user_id_idx ON public.orders USING btree (user_id);
 
+CREATE TABLE IF NOT EXISTS public.drawals (
+	id uuid NOT NULL,
+	user_id uuid NOT NULL,
+	order_number char(11) NOT NULL,
+	sum int NOT NULL,
+	processed_at timestamp with time zone NOT NULL,
+	PRIMARY KEY (id),
+    FOREIGN KEY (order_id) REFERENCES public.orders(id)
+);
+CREATE INDEX drawals_order_id_idx ON public.drawals USING btree (order_id);
+
 -- +goose Down
 SELECT 'down SQL query';
 
@@ -47,3 +58,4 @@ DROP TABLE IF EXISTS public.active_tokens;
 DROP TABLE IF EXISTS public.balance;
 DROP TABLE IF EXISTS public.orders;
 DROP TABLE IF EXISTS public.users;
+DROP TABLE IF EXISTS public.drawals;

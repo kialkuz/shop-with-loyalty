@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	"kialkuz/shop-with-loyalty/internal/service"
+	authService "kialkuz/shop-with-loyalty/internal/auth/service"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 	"net/http"
 	"strings"
@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WithAuth(authService *service.AuthService, secretKey string) gin.HandlerFunc {
+func WithAuth(authService *authService.AuthService, secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 

@@ -30,13 +30,13 @@ func run(sugar *zap.SugaredLogger) error {
 
 	config, err := appConfig.NewConfig()
 	if err != nil {
-		sugar.Error(fmt.Errorf("error get configuration: %s", err.Error()))
+		sugar.Error(fmt.Errorf("error get configuration: %w", err.Error()))
 		return nil
 	}
 
 	pool, err := pgxpool.New(ctx, config.DB.DatabaseURI)
 	if err != nil {
-		sugar.Error(fmt.Errorf("error connect to db: %s", err.Error()))
+		sugar.Error(fmt.Errorf("error connect to db: %w", err.Error()))
 		return nil
 	}
 
@@ -51,6 +51,8 @@ func run(sugar *zap.SugaredLogger) error {
 			appServer.Pool.Close()
 		}
 	}()
+
+	appServer.SchedulerRunner.Run(ctx)
 
 	sugar.Info(fmt.Printf("Server running on port: %s", config.ServerPort))
 	newServer := app.NewServer(config, appServer.Router)

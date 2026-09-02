@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	defaultRunAddress           = "localhost:8080"
+	defaultRunAddress           = "localhost:8081"
 	defaultDatabaseURI          = ""
 	defaultAccrualSystemAddress = ""
 	defaultSecretKey            = ""
