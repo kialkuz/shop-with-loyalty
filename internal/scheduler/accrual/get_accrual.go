@@ -180,7 +180,7 @@ func (sh *AccrualScheduler) getByOrderNumber(
 		req, _ := http.NewRequestWithContext(
 			ctx,
 			http.MethodGet,
-			"http://"+sh.config.AccrualServerHost+":"+sh.config.AccrualServerPort+"/api/orders/"+number,
+			sh.config.AccrualSystemAddress+"/api/orders/"+number,
 			nil,
 		)
 		resp, err := client.Do(req)

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	modelBalance "kialkuz/shop-with-loyalty/internal/domain/balance/model"
 	requestDto "kialkuz/shop-with-loyalty/internal/domain/user/dto/request"
 	modelUser "kialkuz/shop-with-loyalty/internal/domain/user/model"
@@ -55,7 +56,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	tokenString, err := h.authService.GenerateTokenString(ctx, token, h.config.SecretKey)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error, please write to support"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport})
 		return
 	}
 
@@ -67,8 +68,8 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	err = h.authService.RegisterAndLogin(ctx, user, token, balance)
 	if err != nil {
-		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to register"})
+		c.Error(fmt.Errorf("failed to register %v", err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "pkgErrors.ErrWriteToSupport"})
 		return
 	}
 

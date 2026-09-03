@@ -4,16 +4,16 @@ import (
 	"context"
 
 	authRepository "kialkuz/shop-with-loyalty/internal/auth/repository"
-	authService "kialkuz/shop-with-loyalty/internal/auth/service"
+	authServ "kialkuz/shop-with-loyalty/internal/auth/service"
 	"kialkuz/shop-with-loyalty/internal/config"
 	balanceRepository "kialkuz/shop-with-loyalty/internal/domain/balance/repository"
-	balanceService "kialkuz/shop-with-loyalty/internal/domain/balance/service"
+	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	drawalRepository "kialkuz/shop-with-loyalty/internal/domain/drawal/repository"
-	drawalService "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
-	orderRepository "kialkuz/shop-with-loyalty/internal/domain/order/repository"
-	orderService "kialkuz/shop-with-loyalty/internal/domain/order/service"
+	drawalServ "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
+	orderRepo "kialkuz/shop-with-loyalty/internal/domain/order/repository"
+	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
 	userRepository "kialkuz/shop-with-loyalty/internal/domain/user/repository"
-	userService "kialkuz/shop-with-loyalty/internal/domain/user/service"
+	userServ "kialkuz/shop-with-loyalty/internal/domain/user/service"
 	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	"kialkuz/shop-with-loyalty/internal/middleware"
 	"kialkuz/shop-with-loyalty/internal/router"
@@ -38,23 +38,31 @@ func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, c
 
 	transactionManager := infrastructure.NewTransactionManager(pool)
 
-	tokenService := authService.NewTokenService(authRepository.NewTokenRepository(dbStorage))
-	userService := userService.NewUserService(userRepository.NewUserRepository(dbStorage))
-	balanceService := balanceService.NewBalanceService(balanceRepository.NewBalanceRepository(dbStorage))
-	drawalService := drawalService.NewDrawalService(drawalRepository.NewDrawalRepository(dbStorage))
+	tokenService := authServ.NewTokenService(authRepository.NewTokenRepository(dbStorage))
+	userService := userServ.NewUserService(userRepository.NewUserRepository(dbStorage))
+	balanceService := balanceServ.NewBalanceService(balanceRepository.NewBalanceRepository(dbStorage))
+	drawalService := drawalServ.NewDrawalService(drawalRepository.NewDrawalRepository(dbStorage))
 
-	authService := authService.NewAuthService(
+	authService := authServ.NewAuthService(
 		tokenService,
 		userService,
 		balanceService,
 		transactionManager,
 	)
 
-	orderService := orderService.NewOrderService(
+	orderRepository := orderRepo.NewOrderRepository(dbStorage)
+
+	orderService := orderServ.NewOrderService(
 		transactionManager,
-		orderRepository.NewOrderRepository(dbStorage),
+		orderRepository,
 		balanceService,
 		drawalService,
+	)
+
+	accrualService := orderServ.NewAccrualService(
+		config.AccrualSystemAddress,
+		transactionManager,
+		orderService,
 	)
 
 	appHandler := NewHandler(
@@ -64,6 +72,7 @@ func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, c
 		orderService,
 		userService,
 		drawalService,
+		accrualService,
 	)
 
 	schedulerRunner := scheduler.New(
@@ -84,7 +93,7 @@ func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, c
 func getRouter(
 	appHandler *Handler,
 	sugar *zap.SugaredLogger,
-	authService *authService.AuthService,
+	authService *authServ.AuthService,
 	secretKey string,
 ) *gin.Engine {
 	return router.Init(

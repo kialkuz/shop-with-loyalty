@@ -7,12 +7,11 @@ import (
 )
 
 type Config struct {
-	ServerHost        string
-	ServerPort        string
-	DB                db.Config
-	AccrualServerHost string
-	AccrualServerPort string
-	SecretKey         string
+	ServerHost           string
+	ServerPort           string
+	DB                   db.Config
+	AccrualSystemAddress string
+	SecretKey            string
 }
 
 func NewConfig() (*Config, error) {
@@ -22,14 +21,12 @@ func NewConfig() (*Config, error) {
 	}
 
 	addressParts := strings.Split(config.RunAddress, ":")
-	accrualAddressParts := strings.Split(config.AccrualSystemAddress, ":")
 
 	return &Config{
-		ServerHost:        addressParts[0],
-		ServerPort:        addressParts[1],
-		DB:                *db.NewConfig(config.DatabaseURI),
-		AccrualServerHost: accrualAddressParts[0],
-		AccrualServerPort: accrualAddressParts[1],
-		SecretKey:         config.SecretKey,
+		ServerHost:           addressParts[0],
+		ServerPort:           addressParts[1],
+		DB:                   *db.NewConfig(config.DatabaseURI),
+		AccrualSystemAddress: config.AccrualSystemAddress,
+		SecretKey:            config.SecretKey,
 	}, nil
 }

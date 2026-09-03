@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	requestDto "kialkuz/shop-with-loyalty/internal/domain/user/dto/request"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 	"net/http"
@@ -28,10 +29,10 @@ func (h *UserHandler) Login(c *gin.Context) {
 	user, err := h.userService.GetByLogin(ctx, req.Login)
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
-			c.Error(err)
+			c.Error(fmt.Errorf("user not found %v", err))
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrWriteToSupport})
 		return
 	}
 

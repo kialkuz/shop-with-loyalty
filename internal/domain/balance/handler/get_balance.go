@@ -2,6 +2,7 @@ package balance
 
 import (
 	"errors"
+	"fmt"
 	responceDto "kialkuz/shop-with-loyalty/internal/domain/balance/dto/responce"
 	"kialkuz/shop-with-loyalty/internal/helper"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
@@ -21,7 +22,7 @@ func (h *BalanceHandler) GetBalance(c *gin.Context) {
 			c.Error(err)
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Errorf("user %v", pkgErrors.ErrNotFound)})
 		return
 	}
 

@@ -22,7 +22,7 @@ func (h *DrawalHandler) WithDrawals(c *gin.Context) {
 			c.Error(err)
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Errorf("error get configuration: %w", err)})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Errorf("error get configuration: %v", err)})
 		return
 	}
 

@@ -48,7 +48,7 @@ func (h *BalanceHandler) WithDraw(c *gin.Context) {
 		}
 
 		c.Error(err)
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "withdraw not succeed"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": errors.New("withdraw not succeed")})
 		return
 	}
 

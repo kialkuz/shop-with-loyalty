@@ -30,6 +30,7 @@ func NewHandler(
 	orderService *orderServ.OrderService,
 	userService *userServ.UserService,
 	drawalService *drawalServ.DrawalService,
+	accrualService *orderServ.AccrualService,
 ) *Handler {
 	v := validator.NewValidator()
 
@@ -48,6 +49,7 @@ func NewHandler(
 		Order: order.NewOrderHandler(
 			config,
 			orderService,
+			accrualService,
 			userService,
 			balanceService,
 		),
