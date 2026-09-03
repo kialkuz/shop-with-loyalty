@@ -3,7 +3,6 @@ package handler
 import (
 	modelBalance "kialkuz/shop-with-loyalty/internal/domain/balance/model"
 	requestDto "kialkuz/shop-with-loyalty/internal/domain/user/dto/request"
-	responceDto "kialkuz/shop-with-loyalty/internal/domain/user/dto/responce"
 	modelUser "kialkuz/shop-with-loyalty/internal/domain/user/model"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 	"net/http"
@@ -35,7 +34,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	}
 
 	if isLoginExists {
-		c.JSON(http.StatusConflict, gin.H{"error": pkgErrors.ErrLoginBusy})
+		c.JSON(http.StatusConflict, gin.H{"error": pkgErrors.ErrLoginBusy.Error()})
 		return
 	}
 
@@ -73,9 +72,6 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	responseDto := responceDto.Login{
-		Token: tokenString,
-	}
-
-	c.JSON(http.StatusOK, responseDto)
+	c.Header("Authorization", "Bearer "+tokenString)
+	c.JSON(http.StatusOK, gin.H{})
 }

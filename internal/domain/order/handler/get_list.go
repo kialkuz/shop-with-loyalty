@@ -2,6 +2,7 @@ package order
 
 import (
 	"errors"
+	"fmt"
 	dtoResponce "kialkuz/shop-with-loyalty/internal/domain/order/dto/responce"
 	"kialkuz/shop-with-loyalty/internal/helper"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
@@ -15,6 +16,7 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 
 	userID := helper.CurrentUserID(c)
 
+	fmt.Println("222222222222222222")
 	rows, err := h.orderService.GetByUserID(ctx, userID)
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
@@ -27,6 +29,7 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("3333333333333333")
 	var orders []dtoResponce.ViewOrder
 	for _, row := range rows {
 		orders = append(orders, dtoResponce.ViewOrder{
@@ -36,6 +39,8 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 			UploadedAt: row.UploadedAt,
 		})
 	}
+
+	fmt.Println("33333333333333333333")
 
 	c.JSON(http.StatusOK, orders)
 }

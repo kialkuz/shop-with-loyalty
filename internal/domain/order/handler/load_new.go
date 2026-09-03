@@ -2,6 +2,7 @@ package order
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -73,6 +74,17 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	order, err := h.orderService.GetByNumber(ctx, number)
+	if err != nil && !errors.Is(err, pkgErrors.ErrNotFound) {
+		c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println("1111111111111111111111")
+	fmt.Println(order.Number)
+	fmt.Println(order.Status.Value)
+	fmt.Println(order.UploadedAt)
 
 	c.JSON(http.StatusAccepted, gin.H{})
 }

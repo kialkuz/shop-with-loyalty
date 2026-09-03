@@ -34,6 +34,8 @@ type App struct {
 func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, config *config.Config) (*App, error) {
 	dbStorage := infrastructure.NewDB(pool)
 
+	infrastructure.RunMigrations("pgx", config.DB.DatabaseURI)
+
 	transactionManager := infrastructure.NewTransactionManager(pool)
 
 	tokenService := authService.NewTokenService(authRepository.NewTokenRepository(dbStorage))
