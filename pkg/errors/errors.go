@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrAuthNotValid                = errors.New("auth not valid")
+	ErrInvalidAuthorizationHeader  = errors.New("invalid authorization header")
 	ErrTokenIsExpired              = errors.New("token is expired")
 	ErrTokenisBelongsToAnotherUser = errors.New("token is belongs to another user")
 	ErrLoginBusy                   = errors.New("login is busy")
