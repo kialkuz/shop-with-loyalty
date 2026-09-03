@@ -51,7 +51,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	user.Login = req.Login
 	user.Password = string(hashedPassword)
 
-	token := h.authService.MakeToken(user.ID, TOKEN_EXP)
+	token := h.authService.MakeToken(user.ID, TokenExp)
 
 	tokenString, err := h.authService.GenerateTokenString(ctx, token, h.config.SecretKey)
 	if err != nil {
@@ -62,7 +62,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	var balance modelBalance.Balance
 	balance.ID = uuid.New()
-	balance.UserId = user.ID
+	balance.UserID = user.ID
 	balance.Current = 0
 	balance.WithDrawn = 0
 

@@ -26,7 +26,7 @@ func (r *TokenRepository) AddNewToken(
 		ctx,
 		"INSERT INTO active_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
 		token.Jti,
-		token.UserId,
+		token.UserID,
 		token.IssuedAt,
 		token.ExpiresAt,
 	)
@@ -37,7 +37,7 @@ func (r *TokenRepository) GetTokenByJti(ctx context.Context, jti uuid.UUID) (*mo
 	err := r.db.QueryRow(ctx, func(row pgx.Row) error {
 		return row.Scan(
 			&token.Jti,
-			&token.UserId,
+			&token.UserID,
 			&token.IssuedAt,
 			&token.ExpiresAt,
 		)
@@ -60,7 +60,7 @@ func (r *TokenRepository) AddTx(ctx context.Context, tx pgx.Tx, token model.Toke
 		ctx,
 		"INSERT INTO active_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
 		token.Jti,
-		token.UserId,
+		token.UserID,
 		token.IssuedAt,
 		token.ExpiresAt,
 	)

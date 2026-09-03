@@ -29,7 +29,7 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 		return
 	}
 
-	userId := helper.CurrentUserId(c)
+	userID := helper.CurrentUserID(c)
 
 	status, err := model.NewStatus(model.StatusNew)
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 
 	newOrder := model.Order{
 		ID:         uuid.New(),
-		UserId:     userId,
+		UserID:     userID,
 		Number:     model.NewNumber(number),
 		Status:     status,
 		Accrual:    nil,
@@ -59,7 +59,7 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 	}
 
 	if existOrder != nil {
-		if existOrder.IsLoadedByUser(userId) {
+		if existOrder.IsLoadedByUser(userID) {
 			c.JSON(http.StatusConflict, gin.H{"error": "order is loaded by this user"})
 		} else {
 			c.JSON(http.StatusConflict, gin.H{"error": "order is loaded by another user"})

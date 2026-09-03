@@ -41,22 +41,33 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 				c.Error(err)
 			}
 
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrAuthNotValid})
 			return
 		}
 
 		mToken, err := authService.GetTokenByJti(ctx, claims.Jti)
-		if mToken.UserId != claims.UserId {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not valid"})
+		if err != nil {
+			if !errors.Is(err, pkgErrors.ErrNotFound) {
+				c.Error(err)
+			}
+
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrAuthNotValid})
+			return
+		}
+
+		if mToken.UserID != claims.UserID {
+			c.Error(pkgErrors.ErrTokenisBelongsToAnotherUser)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrAuthNotValid})
 			return
 		}
 
 		if mToken.ExpiresAt.Before(time.Now()) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token is expired"})
+			c.Error(pkgErrors.ErrTokenIsExpired)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrAuthNotValid})
 			return
 		}
 
-		c.Set("user_id", mToken.UserId)
+		c.Set("user_id", mToken.UserID)
 		c.Next()
 	}
 }

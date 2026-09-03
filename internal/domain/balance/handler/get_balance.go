@@ -13,9 +13,9 @@ import (
 func (h *BalanceHandler) GetBalance(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	userId := helper.CurrentUserId(c)
+	userID := helper.CurrentUserID(c)
 
-	balance, err := h.balanceService.GetByUserId(ctx, userId)
+	balance, err := h.balanceService.GetByUserID(ctx, userID)
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
 			c.Error(err)

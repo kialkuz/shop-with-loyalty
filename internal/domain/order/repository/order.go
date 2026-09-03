@@ -25,7 +25,7 @@ func (r *OrderRepository) GetByNumber(ctx context.Context, number string) (*orde
 	err := r.db.QueryRow(ctx, func(row pgx.Row) error {
 		return row.Scan(
 			&order.ID,
-			&order.UserId,
+			&order.UserID,
 			&order.Number.Value,
 		)
 	}, "SELECT id, user_id, number FROM orders WHERE number = $1", number)
@@ -38,11 +38,11 @@ func (r *OrderRepository) GetByNumber(ctx context.Context, number string) (*orde
 	return order, nil
 }
 
-func (r *OrderRepository) GetByUserId(ctx context.Context, userId uuid.UUID) ([]orderModel.Order, error) {
+func (r *OrderRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]orderModel.Order, error) {
 	rows, err := r.db.QueryRows(
 		ctx,
 		"SELECT id, user_id, number, status, accrual, uploaded_at FROM orders WHERE user_id = $1",
-		userId,
+		userID,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -94,7 +94,7 @@ func (r *OrderRepository) scanRows(rows pgx.Rows) ([]orderModel.Order, error) {
 
 		if err := rows.Scan(
 			&o.ID,
-			&o.UserId,
+			&o.UserID,
 			&o.Number.Value,
 			&o.Status.Value,
 			&o.Accrual,
@@ -125,7 +125,7 @@ func (r *OrderRepository) Add(
 		ctx,
 		"INSERT INTO orders (id, user_id, number, status, accrual, uploaded_at) VALUES ($1, $2, $3, $4, $5, $6)",
 		order.ID,
-		order.UserId,
+		order.UserID,
 		order.Number.Value,
 		order.Status.Value,
 		order.Accrual,

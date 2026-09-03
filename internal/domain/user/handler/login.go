@@ -6,13 +6,10 @@ import (
 	responceDto "kialkuz/shop-with-loyalty/internal/domain/user/dto/responce"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
-
-const TOKEN_EXP = time.Hour * 3
 
 func (h *UserHandler) Login(c *gin.Context) {
 	ctx := c.Request.Context()
@@ -51,7 +48,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	token := h.authService.MakeToken(user.ID, TOKEN_EXP)
+	token := h.authService.MakeToken(user.ID, TokenExp)
 
 	tokenString, err := h.authService.GenerateTokenString(ctx, token, h.config.SecretKey)
 	if err != nil {

@@ -13,5 +13,4 @@ type UserRepository interface {
 	AddNewUser(ctx context.Context, user model.User) error
 	AddTx(ctx context.Context, tx pgx.Tx, user model.User) error
 	GetByLogin(ctx context.Context, login string) (*model.User, error)
-	GetByToken(ctx context.Context, token string) (*model.User, error)
 }

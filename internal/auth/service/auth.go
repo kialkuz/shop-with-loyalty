@@ -81,10 +81,10 @@ func (s *AuthService) RegisterAndLogin(
 	})
 }
 
-func (s *AuthService) MakeToken(userId uuid.UUID, tokenExp time.Duration) authModel.Token {
+func (s *AuthService) MakeToken(userID uuid.UUID, tokenExp time.Duration) authModel.Token {
 	return authModel.Token{
 		Jti:       uuid.NewString(),
-		UserId:    userId,
+		UserID:    userID,
 		IssuedAt:  time.Now(),
 		ExpiresAt: time.Now().Add(tokenExp),
 	}
@@ -111,7 +111,7 @@ func (s *AuthService) buildJWTString(mToken authModel.Token) *jwt.Token {
 			ExpiresAt: jwt.NewNumericDate(mToken.ExpiresAt),
 			IssuedAt:  jwt.NewNumericDate(mToken.IssuedAt),
 		},
-		UserID: mToken.UserId,
+		UserID: mToken.UserID,
 	}
 
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -142,7 +142,7 @@ func (s *AuthService) ParseTokenString(tokenString, secretKey string) (*authDto.
 
 	return &authDto.Token{
 		Jti:    jti,
-		UserId: claims.UserID,
+		UserID: claims.UserID,
 	}, nil
 }
 

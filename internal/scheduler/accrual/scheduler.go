@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var errorPrefix = errors.New("Error sheduler")
+var errorPrefix = errors.New("error sheduler")
 
 type AccrualScheduler struct {
 	config             *config.Config

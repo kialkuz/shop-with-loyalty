@@ -51,27 +51,6 @@ func (r *UserRepository) GetByLogin(ctx context.Context, login string) (*model.U
 	return user, nil
 }
 
-func (r *UserRepository) GetByToken(ctx context.Context, jti string) (*model.User, error) {
-	user := &model.User{}
-	err := r.db.QueryRow(ctx, func(row pgx.Row) error {
-		return row.Scan(
-			&user.ID,
-			&user.Login,
-		)
-	}, `SELECT u.id, u.login
-		FROM users u
-		JOIN active_tokens a_t ON a_t.user_id = u.id
-		WHERE a_t.jti = $1`,
-		jti)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil, pkgErrors.ErrNotFound
-		}
-		return nil, err
-	}
-	return user, nil
-}
-
 func (r *UserRepository) AddNewUser(
 	ctx context.Context,
 	user model.User,

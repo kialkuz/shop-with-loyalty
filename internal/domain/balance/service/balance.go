@@ -16,19 +16,19 @@ func NewBalanceService(repository BalanceRepository) *BalanceService {
 	return &BalanceService{repository: repository}
 }
 
-func (s *BalanceService) GetByUserId(ctx context.Context, userId uuid.UUID) (*model.Balance, error) {
-	return s.repository.GetByUserId(ctx, userId)
+func (s *BalanceService) GetByUserID(ctx context.Context, userID uuid.UUID) (*model.Balance, error) {
+	return s.repository.GetByUserID(ctx, userID)
 }
 
-func (s *BalanceService) GetByUserIdWithBlockForUpdate(
+func (s *BalanceService) GetByUserIDWithBlockForUpdate(
 	ctx context.Context,
 	tx pgx.Tx,
-	userId uuid.UUID) (*model.Balance, error) {
-	return s.repository.GetByUserIdWithBlockForUpdate(ctx, tx, userId)
+	userID uuid.UUID) (*model.Balance, error) {
+	return s.repository.GetByUserIDWithBlockForUpdate(ctx, tx, userID)
 }
 
-func (s *BalanceService) GetByUsersId(ctx context.Context, usersId []uuid.UUID) (map[uuid.UUID]model.Balance, error) {
-	return s.repository.GetByUsersId(ctx, usersId)
+func (s *BalanceService) GetByUsersID(ctx context.Context, usersID []uuid.UUID) (map[uuid.UUID]model.Balance, error) {
+	return s.repository.GetByUsersID(ctx, usersID)
 }
 
 func (s *BalanceService) UpdateTx(ctx context.Context, tx pgx.Tx, balance model.Balance) error {

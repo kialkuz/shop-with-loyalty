@@ -9,7 +9,7 @@ import (
 
 type Drawal struct {
 	ID          uuid.UUID
-	UserId      uuid.UUID
+	UserID      uuid.UUID
 	OrderNumber orderModel.Number
 	Sum         int
 	ProcessedAt time.Time

@@ -30,17 +30,17 @@ func (h *BalanceHandler) WithDraw(c *gin.Context) {
 		return
 	}
 
-	userId := helper.CurrentUserId(c)
+	userID := helper.CurrentUserID(c)
 
 	drawal := drawalModel.Drawal{
 		ID:          uuid.New(),
-		UserId:      userId,
+		UserID:      userID,
 		OrderNumber: orderModel.NewNumber(req.Order),
 		Sum:         int(req.Sum * 100),
 		ProcessedAt: time.Now(),
 	}
 
-	err := h.orderService.WithDraw(ctx, userId, drawal)
+	err := h.orderService.WithDraw(ctx, userID, drawal)
 	if err != nil {
 		if errors.Is(err, pkgErrors.ErrLessDrawals) {
 			c.JSON(http.StatusPaymentRequired, gin.H{"error": err.Error()})

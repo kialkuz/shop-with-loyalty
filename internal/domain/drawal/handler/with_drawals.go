@@ -14,9 +14,9 @@ import (
 func (h *DrawalHandler) WithDrawals(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	userId := helper.CurrentUserId(c)
+	userID := helper.CurrentUserID(c)
 
-	rows, err := h.drawalService.GetByUserId(ctx, userId)
+	rows, err := h.drawalService.GetByUserID(ctx, userID)
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
 			c.Error(err)

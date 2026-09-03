@@ -5,9 +5,12 @@ import (
 	"kialkuz/shop-with-loyalty/internal/config"
 	userService "kialkuz/shop-with-loyalty/internal/domain/user/service"
 	"kialkuz/shop-with-loyalty/pkg/validator"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+const TokenExp = time.Hour * 3
 
 type UserHandler struct {
 	authService *authService.AuthService

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	balanceModel "kialkuz/shop-with-loyalty/internal/domain/balance/model"
-	order "kialkuz/shop-with-loyalty/internal/domain/order/model"
 	orderModel "kialkuz/shop-with-loyalty/internal/domain/order/model"
 	accrualDto "kialkuz/shop-with-loyalty/internal/scheduler/accrual/dto"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
@@ -31,7 +30,7 @@ var needRetryAddr int64
 
 func (sh *AccrualScheduler) GetList(ctx context.Context) {
 	var err error
-	var usersId []uuid.UUID
+	var usersID []uuid.UUID
 
 	for {
 		ordersList, err = sh.orderService.GetOrdersForGetAccrual(ctx)
@@ -52,10 +51,10 @@ func (sh *AccrualScheduler) GetList(ctx context.Context) {
 		}
 
 		for _, order := range ordersList {
-			usersId = append(usersId, order.UserId)
+			usersID = append(usersID, order.UserID)
 		}
 
-		usersBalance, err := sh.balanceService.GetByUsersId(ctx, usersId)
+		usersBalance, err := sh.balanceService.GetByUsersID(ctx, usersID)
 		if err != nil {
 			sh.sugar.Error(err)
 			return
@@ -85,7 +84,7 @@ func (sh *AccrualScheduler) GetList(ctx context.Context) {
 			}
 
 			orderForUpdate := ordersList[orderAccrual.Number]
-			status, err := order.CreateStatusFromView(orderAccrual.Status)
+			status, err := orderModel.CreateStatusFromView(orderAccrual.Status)
 			if err != nil {
 				sh.sugar.Error(err)
 				return
@@ -96,10 +95,10 @@ func (sh *AccrualScheduler) GetList(ctx context.Context) {
 			orderForUpdate.Status = status
 			orderForUpdate.Accrual = &accrual
 
-			userBalance := usersBalance[orderForUpdate.UserId]
+			userBalance := usersBalance[orderForUpdate.UserID]
 			userBalance.Current += accrual
 
-			usersBalance[orderForUpdate.UserId] = userBalance
+			usersBalance[orderForUpdate.UserID] = userBalance
 
 			err = sh.updateAccrual(ctx, orderForUpdate, userBalance)
 			if err != nil {

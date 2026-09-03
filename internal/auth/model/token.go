@@ -8,7 +8,7 @@ import (
 
 type Token struct {
 	Jti       string
-	UserId    uuid.UUID
+	UserID    uuid.UUID
 	IssuedAt  time.Time
 	ExpiresAt time.Time
 }

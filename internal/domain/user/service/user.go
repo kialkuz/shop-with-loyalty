@@ -4,7 +4,6 @@ import (
 	"context"
 	"kialkuz/shop-with-loyalty/internal/domain/user/model"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -27,17 +26,6 @@ func (s *UserService) GetByLogin(ctx context.Context, login string) (*model.User
 	}
 
 	return user, nil
-}
-
-func (s *UserService) GetUserIdByToken(ctx context.Context, token string) (*uuid.UUID, error) {
-	user, err := s.repository.GetByToken(ctx, token)
-	if err != nil {
-		return nil, err
-	}
-
-	userId := user.ID
-
-	return &userId, nil
 }
 
 func (s *UserService) AddNewUser(ctx context.Context, user model.User) error {

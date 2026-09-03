@@ -26,7 +26,7 @@ func (r *DrawalRepository) AddTx(ctx context.Context, tx pgx.Tx, drawal modelDra
 		ctx,
 		"INSERT INTO drawals (id, user_id, order_number, sum, processed_at) VALUES ($1, $2, $3, $4, $5)",
 		drawal.ID,
-		drawal.UserId,
+		drawal.UserID,
 		drawal.OrderNumber.Value,
 		drawal.Sum,
 		drawal.ProcessedAt,
@@ -35,14 +35,14 @@ func (r *DrawalRepository) AddTx(ctx context.Context, tx pgx.Tx, drawal modelDra
 	return err
 }
 
-func (r *DrawalRepository) GetByUserId(ctx context.Context, userId uuid.UUID) ([]drawalDto.UserDrawal, error) {
+func (r *DrawalRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([]drawalDto.UserDrawal, error) {
 	rows, err := r.db.QueryRows(
 		ctx,
 		`SELECT order_number, sum, processed_at
 		FROM drawals
 		WHERE user_id = $1
 		ORDER BY processed_at DESC`,
-		userId,
+		userID,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {

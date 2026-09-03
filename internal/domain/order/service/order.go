@@ -17,7 +17,7 @@ type OrderRepository interface {
 	GetByNumber(ctx context.Context, number string) (*orderModel.Order, error)
 	Add(ctx context.Context, order orderModel.Order) error
 	UpdateTx(ctx context.Context, tx pgx.Tx, order orderModel.Order) error
-	GetByUserId(ctx context.Context, userId uuid.UUID) ([]orderModel.Order, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID) ([]orderModel.Order, error)
 	GetOrdersForGetAccrual(ctx context.Context) (map[string]orderModel.Order, error)
 }
 
@@ -54,17 +54,17 @@ func (s *OrderService) UpdateTx(ctx context.Context, tx pgx.Tx, order orderModel
 	return s.repository.UpdateTx(ctx, tx, order)
 }
 
-func (s *OrderService) GetByUserId(ctx context.Context, userId uuid.UUID) ([]orderModel.Order, error) {
-	return s.repository.GetByUserId(ctx, userId)
+func (s *OrderService) GetByUserID(ctx context.Context, userID uuid.UUID) ([]orderModel.Order, error) {
+	return s.repository.GetByUserID(ctx, userID)
 }
 
 func (s *OrderService) GetOrdersForGetAccrual(ctx context.Context) (map[string]orderModel.Order, error) {
 	return s.repository.GetOrdersForGetAccrual(ctx)
 }
 
-func (s *OrderService) WithDraw(ctx context.Context, userId uuid.UUID, drawal model.Drawal) error {
+func (s *OrderService) WithDraw(ctx context.Context, userID uuid.UUID, drawal model.Drawal) error {
 	return s.transactionManager.WithinTransaction(ctx, func(tx pgx.Tx) error {
-		balance, err := s.balanceService.GetByUserIdWithBlockForUpdate(ctx, tx, userId)
+		balance, err := s.balanceService.GetByUserIDWithBlockForUpdate(ctx, tx, userID)
 		if err != nil {
 			return err
 		}

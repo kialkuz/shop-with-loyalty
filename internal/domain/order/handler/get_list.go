@@ -13,9 +13,9 @@ import (
 func (h *OrderHandler) GetList(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	userId := helper.CurrentUserId(c)
+	userID := helper.CurrentUserID(c)
 
-	rows, err := h.orderService.GetByUserId(ctx, userId)
+	rows, err := h.orderService.GetByUserID(ctx, userID)
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
 			c.Error(err)

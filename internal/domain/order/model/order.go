@@ -8,13 +8,13 @@ import (
 
 type Order struct {
 	ID         uuid.UUID
-	UserId     uuid.UUID
+	UserID     uuid.UUID
 	Number     Number
 	Status     *Status
 	Accrual    *int
 	UploadedAt time.Time
 }
 
-func (m *Order) IsLoadedByUser(userId uuid.UUID) bool {
-	return m.UserId == userId
+func (m *Order) IsLoadedByUser(userID uuid.UUID) bool {
+	return m.UserID == userID
 }

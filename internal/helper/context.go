@@ -5,9 +5,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func CurrentUserId(c *gin.Context) uuid.UUID {
+func CurrentUserID(c *gin.Context) uuid.UUID {
 	value, _ := c.Get("user_id")
-	userId, _ := value.(uuid.UUID)
+	userID, _ := value.(uuid.UUID)
 
-	return userId
+	return userID
 }

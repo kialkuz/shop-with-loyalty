@@ -11,7 +11,7 @@ import (
 
 type DrawalRepository interface {
 	AddTx(ctx context.Context, tx pgx.Tx, drawal model.Drawal) error
-	GetByUserId(ctx context.Context, userId uuid.UUID) ([]drawalDto.UserDrawal, error)
+	GetByUserID(ctx context.Context, userID uuid.UUID) ([]drawalDto.UserDrawal, error)
 }
 
 type DrawalService struct {
@@ -26,6 +26,6 @@ func (s *DrawalService) AddTx(ctx context.Context, tx pgx.Tx, drawal model.Drawa
 	return s.repository.AddTx(ctx, tx, drawal)
 }
 
-func (s *DrawalService) GetByUserId(ctx context.Context, userId uuid.UUID) ([]drawalDto.UserDrawal, error) {
-	return s.repository.GetByUserId(ctx, userId)
+func (s *DrawalService) GetByUserID(ctx context.Context, userID uuid.UUID) ([]drawalDto.UserDrawal, error) {
+	return s.repository.GetByUserID(ctx, userID)
 }
