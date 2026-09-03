@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	balanceModel "kialkuz/shop-with-loyalty/internal/domain/balance/model"
 	balanceService "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	"kialkuz/shop-with-loyalty/internal/domain/drawal/model"
 	drawalService "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
@@ -63,7 +64,7 @@ func (s *OrderService) GetOrdersForGetAccrual(ctx context.Context) (map[string]o
 }
 
 func (s *OrderService) WithDraw(ctx context.Context, userID uuid.UUID, drawal model.Drawal) error {
-	return s.transactionManager.WithinTransaction(ctx, func(tx pgx.Tx) error {
+	return s.transactionManager.RunTransaction(ctx, func(tx pgx.Tx) error {
 		balance, err := s.balanceService.GetByUserIDWithBlockForUpdate(ctx, tx, userID)
 		if err != nil {
 			return err
@@ -81,6 +82,26 @@ func (s *OrderService) WithDraw(ctx context.Context, userID uuid.UUID, drawal mo
 		}
 
 		err = s.drawalService.AddTx(ctx, tx, drawal)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (s *OrderService) UpdateAccrual(
+	ctx context.Context,
+	orderForUpdate orderModel.Order,
+	userBalance balanceModel.Balance,
+) error {
+	return s.transactionManager.RunTransaction(ctx, func(tx pgx.Tx) error {
+		err := s.UpdateTx(ctx, tx, orderForUpdate)
+		if err != nil {
+			return err
+		}
+
+		err = s.balanceService.UpdateTx(ctx, tx, userBalance)
 		if err != nil {
 			return err
 		}

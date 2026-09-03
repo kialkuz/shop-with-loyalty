@@ -61,7 +61,7 @@ func (s *AuthService) RegisterAndLogin(
 	token authModel.Token,
 	balance balanceModel.Balance,
 ) error {
-	return s.transactionManager.WithinTransaction(ctx, func(tx pgx.Tx) error {
+	return s.transactionManager.RunTransaction(ctx, func(tx pgx.Tx) error {
 		err := s.userService.AddTx(ctx, tx, user)
 		if err != nil {
 			return err

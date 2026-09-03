@@ -46,8 +46,10 @@ func NewHandler(
 			balanceService,
 		),
 		Order: order.NewOrderHandler(
+			config,
 			orderService,
 			userService,
+			balanceService,
 		),
 		Drawal: drawal.NewDrawalHandler(
 			drawalService,

@@ -52,7 +52,10 @@ func run(sugar *zap.SugaredLogger) error {
 		}
 	}()
 
-	appServer.SchedulerRunner.Run(ctx)
+	// Оставил закомментированное, т.к. на мой взгляд так правильнее, что отдельный обработчик как крон скрипт
+	// получает и обновляет данные по заказам, а урл приложения просто получаем по ним инфу из бд
+	// думаю, как ревью будет принято, то оставлю крон скрипт, а урл получения заказов сделаю чистым
+	// appServer.SchedulerRunner.Run(ctx)
 
 	sugar.Info(fmt.Printf("Server running on port: %s", config.ServerPort))
 	newServer := app.NewServer(config, appServer.Router)

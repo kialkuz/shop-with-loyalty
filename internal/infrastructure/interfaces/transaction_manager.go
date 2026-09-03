@@ -7,7 +7,7 @@ import (
 )
 
 type TransactionManager interface {
-	WithinTransaction(
+	RunTransaction(
 		ctx context.Context,
 		fn func(pgx.Tx) error,
 	) error

@@ -31,7 +31,7 @@ CREATE INDEX account_user_id_idx ON public.balance USING btree (user_id);
 CREATE TABLE IF NOT EXISTS public.orders (
 	id uuid NOT NULL,
 	user_id uuid NOT NULL,
-	"number" char(11) NOT NULL,
+	"number" varchar(255) NOT NULL,
 	"status" varchar(50) NOT NULL,
 	"accrual" int NULL,
 	uploaded_at timestamp with time zone NOT NULL,

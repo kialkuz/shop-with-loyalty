@@ -15,7 +15,7 @@ func NewTransactionManager(pool *pgxpool.Pool) *TransactionManager {
 	return &TransactionManager{pool: pool}
 }
 
-func (m *TransactionManager) WithinTransaction(
+func (m *TransactionManager) RunTransaction(
 	ctx context.Context,
 	fn func(tx pgx.Tx) error,
 ) error {

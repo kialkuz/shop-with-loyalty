@@ -225,7 +225,7 @@ func (sh *AccrualScheduler) updateAccrual(
 	orderForUpdate orderModel.Order,
 	userBalance balanceModel.Balance,
 ) error {
-	return sh.transactionManager.WithinTransaction(ctx, func(tx pgx.Tx) error {
+	return sh.transactionManager.RunTransaction(ctx, func(tx pgx.Tx) error {
 		err := sh.orderService.UpdateTx(ctx, tx, orderForUpdate)
 		if err != nil {
 			return err
