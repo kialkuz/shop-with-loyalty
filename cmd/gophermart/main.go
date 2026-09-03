@@ -30,13 +30,13 @@ func run(sugar *zap.SugaredLogger) error {
 
 	config, err := appConfig.NewConfig()
 	if err != nil {
-		sugar.Error(fmt.Errorf("error get configuration: %w", err.Error()))
+		sugar.Error(fmt.Errorf("error get configuration: %v", err.Error()))
 		return nil
 	}
 
 	pool, err := pgxpool.New(ctx, config.DB.DatabaseURI)
 	if err != nil {
-		sugar.Error(fmt.Errorf("error connect to db: %w", err.Error()))
+		sugar.Error(fmt.Errorf("error connect to db: %v", err.Error()))
 		return nil
 	}
 
