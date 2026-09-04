@@ -33,7 +33,7 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 
 	status, err := model.NewStatus(model.StatusNew)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -47,11 +47,11 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 	}
 
 	if !newOrder.Number.CheckWithLuna() {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "invalid order number format"})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": pkgErrors.ErrInvalidOrderNumberFormat.Error()})
 		return
 	}
 
-	existOrder, err := h.orderService.GetByNumber(ctx, number)
+	existOrder, err := h.orderService.GetByNumber(ctx, newOrder.Number.Value)
 	if err != nil && !errors.Is(err, pkgErrors.ErrNotFound) {
 		c.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -59,11 +59,15 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 	}
 
 	if existOrder != nil {
+		var err error
+
 		if existOrder.IsLoadedByUser(userID) {
-			c.JSON(http.StatusConflict, gin.H{"error": "order is loaded by this user"})
+			err = errors.New("order is loaded by this user")
 		} else {
-			c.JSON(http.StatusConflict, gin.H{"error": "order is loaded by another user"})
+			err = errors.New("order is loaded by another user")
 		}
+
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 

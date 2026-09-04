@@ -11,6 +11,7 @@ var (
 	ErrNotFound                    = errors.New("not found")
 	ErrWriteToSupport              = errors.New("error, please write to support")
 	ErrTokenIsNotValid             = errors.New("token is not valid")
+	ErrInvalidOrderNumberFormat    = errors.New("invalid order number format")
 	ErrEmptyListOrders             = errors.New("empty list orders")
 	ErrLessDrawals                 = errors.New("drawals less then sum")
 )

@@ -43,7 +43,7 @@ CREATE INDEX orders_user_id_idx ON public.orders USING btree (user_id);
 CREATE TABLE IF NOT EXISTS public.drawals (
 	id uuid NOT NULL,
 	user_id uuid NOT NULL,
-	order_number char(11) NOT NULL,
+	order_number varchar(255) NOT NULL,
 	sum int NOT NULL,
 	processed_at timestamp with time zone NOT NULL,
 	PRIMARY KEY (id),

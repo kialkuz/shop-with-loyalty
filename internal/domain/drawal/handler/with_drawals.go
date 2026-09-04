@@ -2,7 +2,6 @@ package balance
 
 import (
 	"errors"
-	"fmt"
 	dtoResponce "kialkuz/shop-with-loyalty/internal/domain/drawal/dto/responce"
 	"kialkuz/shop-with-loyalty/internal/helper"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
@@ -22,7 +21,7 @@ func (h *DrawalHandler) WithDrawals(c *gin.Context) {
 			c.Error(err)
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Errorf("error get configuration: %v", err)})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "error get configuration: " + err.Error()})
 		return
 	}
 

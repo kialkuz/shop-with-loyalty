@@ -40,6 +40,11 @@ func (h *BalanceHandler) WithDraw(c *gin.Context) {
 		ProcessedAt: time.Now(),
 	}
 
+	if !drawal.OrderNumber.CheckWithLuna() {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": pkgErrors.ErrInvalidOrderNumberFormat.Error()})
+		return
+	}
+
 	err := h.orderService.WithDraw(ctx, userID, drawal)
 	if err != nil {
 		if errors.Is(err, pkgErrors.ErrLessDrawals) {
@@ -48,7 +53,7 @@ func (h *BalanceHandler) WithDraw(c *gin.Context) {
 		}
 
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": errors.New("withdraw not succeed")})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "withdraw not succeed"})
 		return
 	}
 	return
