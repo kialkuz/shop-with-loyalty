@@ -1,13 +1,16 @@
 package model
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 type Number struct {
 	Value string
 }
 
 func NewNumber(value string) Number {
-	return Number{Value: value}
+	return Number{Value: strings.TrimSpace(value)}
 }
 
 func (o Number) CheckWithLuna() bool {
