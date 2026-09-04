@@ -1,6 +1,6 @@
 package responce
 
 type ViewBalance struct {
-	Current   int `json:"current"`
-	WithDrawn int `json:"withdrawn"`
+	Current   float64 `json:"current"`
+	WithDrawn float64 `json:"withdrawn"`
 }

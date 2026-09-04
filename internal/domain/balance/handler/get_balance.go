@@ -26,8 +26,18 @@ func (h *BalanceHandler) GetBalance(c *gin.Context) {
 		return
 	}
 
+	var current, withDrawn float64
+
+	if balance.Current != 0 {
+		current = float64(balance.Current) / 100
+	}
+
+	if balance.WithDrawn != 0 {
+		withDrawn = float64(balance.WithDrawn) / 100
+	}
+
 	c.JSON(http.StatusOK, responceDto.ViewBalance{
-		Current:   balance.Current,
-		WithDrawn: balance.WithDrawn,
+		Current:   current,
+		WithDrawn: withDrawn,
 	})
 }
