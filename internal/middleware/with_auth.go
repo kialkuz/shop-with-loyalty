@@ -17,9 +17,11 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 		ctx := c.Request.Context()
 
 		authHeader := c.GetHeader("Authorization")
+		fmt.Println("111111111111111111")
+		fmt.Println(authHeader)
 
 		if authHeader == "" {
-			fmt.Println("111111111111111111")
+			fmt.Println("2222222222222222")
 			c.Error(pkgErrors.ErrInvalidAuthorizationHeader)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": pkgErrors.ErrAuthNotValid.Error(),
@@ -30,7 +32,7 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 		parts := strings.Fields(authHeader)
 
 		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
-			fmt.Println("2222222222222222222")
+			fmt.Println("333333333333333333333")
 			c.Error(pkgErrors.ErrInvalidAuthorizationHeader)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": pkgErrors.ErrAuthNotValid.Error(),
@@ -42,7 +44,7 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 
 		claims, err := authService.ParseTokenString(tokenString, secretKey)
 		if err != nil {
-			fmt.Println("333333333333333333333")
+			fmt.Println("44444444444444444444444")
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)
 			}
@@ -53,7 +55,7 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 
 		mToken, err := authService.GetTokenByJti(ctx, claims.Jti)
 		if err != nil {
-			fmt.Println("4444444444444444444")
+			fmt.Println("55555555555555555555")
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)
 			}
@@ -63,14 +65,14 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 		}
 
 		if mToken.UserID != claims.UserID {
-			fmt.Println("55555555555555555555")
+			fmt.Println("666666666666666666666666")
 			c.Error(pkgErrors.ErrTokenisBelongsToAnotherUser)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrAuthNotValid.Error()})
 			return
 		}
 
 		if mToken.ExpiresAt.Before(time.Now()) {
-			fmt.Println("666666666666666666666")
+			fmt.Println("7777777777777777")
 			c.Error(pkgErrors.ErrTokenIsExpired)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrAuthNotValid.Error()})
 			return
