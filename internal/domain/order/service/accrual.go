@@ -61,9 +61,7 @@ func (s *AccrualService) GetAndUpdateAccruals(
 
 	ordersFromAccrual, accrualErrors := s.getFromAccrualSystem(ctx, ordersForGetAccrual)
 
-	for _, accrualError := range accrualErrors {
-		errorsList = append(errorsList, accrualError)
-	}
+	errorsList = append(errorsList, accrualErrors...)
 
 	for _, order := range ordersFromAccrual {
 		orderForUpdate := ordersForGetAccrual[order.Number]

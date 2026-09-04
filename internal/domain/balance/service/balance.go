@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-//go:generate go run go.uber.org/mock/mockgen -destination=mocks/token_repository_mock.go -package=mocks -typed
+//go:generate go run go.uber.org/mock/mockgen -source=balance.go -destination=mocks/balance_mock.go -package=mocks -typed
 type BalanceRepository interface {
 	GetByUserID(ctx context.Context, userID uuid.UUID) (*model.Balance, error)
 	GetByUserIDWithBlockForUpdate(ctx context.Context, tx pgx.Tx, userID uuid.UUID) (*model.Balance, error)
