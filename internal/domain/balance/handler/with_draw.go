@@ -57,5 +57,5 @@ func (h *BalanceHandler) WithDraw(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{})
+	c.JSON(http.StatusOK, gin.H{})
 }
