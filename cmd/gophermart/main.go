@@ -6,9 +6,15 @@ import (
 	"kialkuz/shop-with-loyalty/internal/app"
 	appConfig "kialkuz/shop-with-loyalty/internal/config"
 	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -30,13 +36,13 @@ func run(sugar *zap.SugaredLogger) error {
 
 	config, err := appConfig.NewConfig()
 	if err != nil {
-		sugar.Error(fmt.Errorf("error get configuration: %v", err.Error()))
+		sugar.Error(fmt.Errorf("error get configuration: %w", err))
 		return nil
 	}
 
 	pool, err := pgxpool.New(ctx, config.DB.DatabaseURI)
 	if err != nil {
-		sugar.Error(fmt.Errorf("error connect to db: %v", err.Error()))
+		sugar.Error(fmt.Errorf("error connect to db: %w", err))
 		return nil
 	}
 
@@ -52,18 +58,41 @@ func run(sugar *zap.SugaredLogger) error {
 		}
 	}()
 
-	// Оставил закомментированное, т.к. на мой взгляд так правильнее, что отдельный обработчик как крон скрипт
-	// получает и обновляет данные по заказам, а урл приложения просто получаем по ним инфу из бд
-	// думаю, как ревью будет принято, то оставлю крон скрипт, а урл получения заказов сделаю чистым
-	// appServer.SchedulerRunner.Run(ctx)
-
-	sugar.Info(fmt.Printf("Server running on port: %s", config.ServerPort))
-	newServer := app.NewServer(config, appServer.Router)
-	err = newServer.ListenAndServe()
-	if err != nil {
-		sugar.Error(fmt.Errorf("error starting server: %s", err.Error()))
-		return nil
+	srv := &http.Server{
+		Handler: appServer.Router,
+		Addr:    ":" + config.ServerPort,
 	}
+
+	g := new(errgroup.Group)
+
+	g.Go(func() error {
+		sugar.Info("Server running on port ", config.ServerPort)
+
+		err := http.ListenAndServe(":"+config.ServerPort, appServer.Router)
+		if err != nil && err != http.ErrServerClosed {
+			return fmt.Errorf("Failed to start server %s", err)
+		}
+
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		return err
+	}
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+	<-stop
+
+	sugar.Info("Shutting down server...")
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		return fmt.Errorf("Server forced to shutdown: %w", err)
+	}
+	sugar.Info("Server gracefully shutdown")
 
 	return nil
 }
