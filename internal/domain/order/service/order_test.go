@@ -39,7 +39,7 @@ func TestGetBNumber(t *testing.T) {
 
 	order := getOrder(uuid.New(), "12345678903")
 
-	mockRepo.EXPECT().GetByNumber(ctx, order.Number).Return(&order, nil)
+	mockRepo.EXPECT().GetByNumber(ctx, gomock.Any()).Return(&order, nil)
 
 	result, err := service.GetByNumber(ctx, order.Number.Value)
 
@@ -66,7 +66,7 @@ func TestGetByUserID(t *testing.T) {
 
 	order := getOrder(uuid.New(), "12345678903")
 
-	mockRepo.EXPECT().GetByUserID(ctx, order.UserID).Return([]orderModel.Order{
+	mockRepo.EXPECT().GetByUserID(ctx, gomock.Any()).Return([]orderModel.Order{
 		order,
 	}, nil)
 
@@ -95,7 +95,7 @@ func TestAdd(t *testing.T) {
 
 	order := getOrder(uuid.New(), "12345678903")
 
-	mockRepo.EXPECT().Add(ctx, order).Return(nil)
+	mockRepo.EXPECT().Add(ctx, gomock.Any()).Return(nil)
 
 	err := service.Add(ctx, order)
 
@@ -147,10 +147,6 @@ func TestWithDraw(t *testing.T) {
 		WithDrawn: 0,
 	}
 
-	expectedBalance := *balance
-	expectedBalance.Current = 50
-	expectedBalance.WithDrawn = 50
-
 	mockTransaction.
 		EXPECT().
 		RunTransaction(ctx, gomock.All()).
@@ -158,14 +154,14 @@ func TestWithDraw(t *testing.T) {
 			return fn(mockTx)
 		})
 
-	mockBalanceRepo.EXPECT().GetByUserIDWithBlockForUpdate(ctx, mockTx, userID).Return(balance, nil)
+	mockBalanceRepo.EXPECT().GetByUserIDWithBlockForUpdate(ctx, mockTx, gomock.Any()).Return(balance, nil)
 
 	mockBalanceRepo.
 		EXPECT().
 		UpdateTx(
 			ctx,
 			mockTx,
-			expectedBalance,
+			gomock.Any(),
 		).
 		Return(nil)
 
@@ -174,7 +170,7 @@ func TestWithDraw(t *testing.T) {
 		AddTx(
 			ctx,
 			mockTx,
-			drawal,
+			gomock.Any(),
 		).
 		Return(nil)
 

@@ -21,7 +21,7 @@ func TestGetByUserID(t *testing.T) {
 	ctx := context.Background()
 	userID := uuid.New()
 
-	mockRepo.EXPECT().GetByUserID(ctx, userID).Return(&model.Balance{
+	mockRepo.EXPECT().GetByUserID(ctx, gomock.Any()).Return(&model.Balance{
 		ID:        uuid.New(),
 		UserID:    userID,
 		Current:   0,

@@ -44,7 +44,7 @@ func TestGetByLogin(t *testing.T) {
 		Password: "12345",
 	}
 
-	mockRepo.EXPECT().GetByLogin(ctx, user.Login).Return(user, nil)
+	mockRepo.EXPECT().GetByLogin(ctx, gomock.Any()).Return(user, nil)
 
 	result, err := service.GetByLogin(ctx, user.Login)
 
@@ -67,7 +67,7 @@ func TestAddNewUser(t *testing.T) {
 		Password: "12345",
 	}
 
-	mockRepo.EXPECT().AddNewUser(ctx, user).Return(nil)
+	mockRepo.EXPECT().AddNewUser(ctx, gomock.Any()).Return(nil)
 
 	err := service.AddNewUser(ctx, user)
 

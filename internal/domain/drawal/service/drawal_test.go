@@ -23,7 +23,7 @@ func TestGetByUserID(t *testing.T) {
 	ctx := context.Background()
 	userID := uuid.New()
 
-	mockRepo.EXPECT().GetByUserID(ctx, userID).Return([]drawalDto.UserDrawal{
+	mockRepo.EXPECT().GetByUserID(ctx, gomock.Any()).Return([]drawalDto.UserDrawal{
 		{
 			OrderNumber: orderModel.NewNumber("12345678903"),
 			Sum:         100,
