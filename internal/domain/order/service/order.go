@@ -7,13 +7,14 @@ import (
 	"kialkuz/shop-with-loyalty/internal/domain/drawal/model"
 	drawalService "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
 	orderModel "kialkuz/shop-with-loyalty/internal/domain/order/model"
-	infrastructureInterfaces "kialkuz/shop-with-loyalty/internal/infrastructure/interfaces"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
+//go:generate go run go.uber.org/mock/mockgen -source=order.go -destination=mocks/order_mock.go -package=mocks -typed
 type OrderRepository interface {
 	GetByNumber(ctx context.Context, number string) (*orderModel.Order, error)
 	Add(ctx context.Context, order orderModel.Order) error
@@ -23,14 +24,14 @@ type OrderRepository interface {
 }
 
 type OrderService struct {
-	transactionManager infrastructureInterfaces.TransactionManager
+	transactionManager infrastructure.Transaction
 	repository         OrderRepository
 	balanceService     *balanceService.BalanceService
 	drawalService      *drawalService.DrawalService
 }
 
 func NewOrderService(
-	transactionManager infrastructureInterfaces.TransactionManager,
+	transactionManager infrastructure.Transaction,
 	repository OrderRepository,
 	balanceService *balanceService.BalanceService,
 	drawalService *drawalService.DrawalService,

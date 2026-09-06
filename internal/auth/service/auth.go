@@ -8,7 +8,7 @@ import (
 	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	userModel "kialkuz/shop-with-loyalty/internal/domain/user/model"
 	userServ "kialkuz/shop-with-loyalty/internal/domain/user/service"
-	infrastructureInterfaces "kialkuz/shop-with-loyalty/internal/infrastructure/interfaces"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 	"time"
 
@@ -30,14 +30,14 @@ type AuthService struct {
 	tokenService       *TokenService
 	userService        *userServ.UserService
 	balanceService     *balanceServ.BalanceService
-	transactionManager infrastructureInterfaces.TransactionManager
+	transactionManager infrastructure.Transaction
 }
 
 func NewAuthService(
 	tokenService *TokenService,
 	userService *userServ.UserService,
 	balanceService *balanceServ.BalanceService,
-	transactionManager infrastructureInterfaces.TransactionManager,
+	transactionManager infrastructure.Transaction,
 ) *AuthService {
 	return &AuthService{
 		tokenService:       tokenService,

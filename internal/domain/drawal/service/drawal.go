@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+//go:generate go run go.uber.org/mock/mockgen -source=drawal.go -destination=mocks/drawal_mock.go -package=mocks -typed
 type DrawalRepository interface {
 	AddTx(ctx context.Context, tx pgx.Tx, drawal model.Drawal) error
 	GetByUserID(ctx context.Context, userID uuid.UUID) ([]drawalDto.UserDrawal, error)

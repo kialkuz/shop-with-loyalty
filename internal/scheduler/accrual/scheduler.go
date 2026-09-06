@@ -6,7 +6,7 @@ import (
 	"kialkuz/shop-with-loyalty/internal/config"
 	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
-	infrastructureInterfaces "kialkuz/shop-with-loyalty/internal/infrastructure/interfaces"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	"sync"
 
 	"go.uber.org/zap"
@@ -17,7 +17,7 @@ var errorPrefix = errors.New("error sheduler")
 type AccrualScheduler struct {
 	config             *config.Config
 	sugar              *zap.SugaredLogger
-	transactionManager infrastructureInterfaces.TransactionManager
+	transactionManager infrastructure.Transaction
 	orderService       *orderServ.OrderService
 	balanceService     *balanceServ.BalanceService
 	m                  sync.Mutex
@@ -26,7 +26,7 @@ type AccrualScheduler struct {
 func New(
 	config *config.Config,
 	sugar *zap.SugaredLogger,
-	transactionManager infrastructureInterfaces.TransactionManager,
+	transactionManager infrastructure.Transaction,
 	orderService *orderServ.OrderService,
 	balanceService *balanceServ.BalanceService,
 ) *AccrualScheduler {

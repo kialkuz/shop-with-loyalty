@@ -7,6 +7,14 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+//go:generate go run go.uber.org/mock/mockgen -source=user.go -destination=mocks/user_repository_mock.go -package=mocks -typed
+type UserRepository interface {
+	CheckExistLogin(ctx context.Context, login string) (bool, error)
+	AddNewUser(ctx context.Context, user model.User) error
+	AddTx(ctx context.Context, tx pgx.Tx, user model.User) error
+	GetByLogin(ctx context.Context, login string) (*model.User, error)
+}
+
 type UserService struct {
 	repository UserRepository
 }

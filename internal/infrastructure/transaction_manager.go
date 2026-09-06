@@ -7,6 +7,15 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+//go:generate go run go.uber.org/mock/mockgen -destination=mocks/pgx_tx_mock.go -package=mocks github.com/jackc/pgx/v5 Tx
+//go:generate go run go.uber.org/mock/mockgen -source=transaction_manager.go -destination=mocks/transaction_mock.go -package=mocks -typed
+type Transaction interface {
+	RunTransaction(
+		ctx context.Context,
+		fn func(pgx.Tx) error,
+	) error
+}
+
 type TransactionManager struct {
 	pool *pgxpool.Pool
 }

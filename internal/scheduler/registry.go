@@ -4,7 +4,7 @@ import (
 	"kialkuz/shop-with-loyalty/internal/config"
 	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
-	infrastructureInterfaces "kialkuz/shop-with-loyalty/internal/infrastructure/interfaces"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	"kialkuz/shop-with-loyalty/internal/scheduler/accrual"
 
 	"go.uber.org/zap"
@@ -13,7 +13,7 @@ import (
 func New(
 	config *config.Config,
 	sugar *zap.SugaredLogger,
-	transactionManager infrastructureInterfaces.TransactionManager,
+	transactionManager infrastructure.Transaction,
 	ordersService *orderServ.OrderService,
 	balanceService *balanceServ.BalanceService,
 ) *Runner {

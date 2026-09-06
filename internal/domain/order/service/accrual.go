@@ -7,7 +7,7 @@ import (
 	"fmt"
 	balanceModel "kialkuz/shop-with-loyalty/internal/domain/balance/model"
 	orderModel "kialkuz/shop-with-loyalty/internal/domain/order/model"
-	infrastructureInterfaces "kialkuz/shop-with-loyalty/internal/infrastructure/interfaces"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	"net/http"
 	"strconv"
 	"sync"
@@ -36,13 +36,13 @@ type orderAccrual struct {
 type AccrualService struct {
 	m                    sync.Mutex
 	accrualSystemAddress string
-	transactionManager   infrastructureInterfaces.TransactionManager
+	transactionManager   infrastructure.Transaction
 	orderService         *OrderService
 }
 
 func NewAccrualService(
 	accrualSystemAddress string,
-	transactionManager infrastructureInterfaces.TransactionManager,
+	transactionManager infrastructure.Transaction,
 	orderService *OrderService,
 ) *AccrualService {
 	return &AccrualService{
