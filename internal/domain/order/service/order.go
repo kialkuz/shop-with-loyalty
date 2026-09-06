@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	balanceModel "kialkuz/shop-with-loyalty/internal/domain/balance/model"
 	balanceService "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	"kialkuz/shop-with-loyalty/internal/domain/drawal/model"
 	drawalService "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
@@ -93,8 +92,8 @@ func (s *OrderService) WithDraw(ctx context.Context, userID uuid.UUID, drawal mo
 
 func (s *OrderService) UpdateAccrual(
 	ctx context.Context,
+	userID uuid.UUID,
 	orderForUpdate orderModel.Order,
-	userBalance balanceModel.Balance,
 ) error {
 	return s.transactionManager.RunTransaction(ctx, func(tx pgx.Tx) error {
 		err := s.UpdateTx(ctx, tx, orderForUpdate)
@@ -102,7 +101,14 @@ func (s *OrderService) UpdateAccrual(
 			return err
 		}
 
-		err = s.balanceService.UpdateTx(ctx, tx, userBalance)
+		userBalance, err := s.balanceService.GetByUserID(ctx, userID)
+		if err != nil {
+			return err
+		}
+
+		userBalance.Current += *orderForUpdate.Accrual
+
+		err = s.balanceService.UpdateTx(ctx, tx, *userBalance)
 		if err != nil {
 			return err
 		}

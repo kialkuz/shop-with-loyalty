@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	balanceModel "kialkuz/shop-with-loyalty/internal/domain/balance/model"
 	orderModel "kialkuz/shop-with-loyalty/internal/domain/order/model"
 	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	"net/http"
@@ -13,6 +12,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const WaitAccrualRequest = 2
@@ -54,8 +55,8 @@ func NewAccrualService(
 
 func (s *AccrualService) GetAndUpdateAccruals(
 	ctx context.Context,
+	userID uuid.UUID,
 	ordersForGetAccrual map[string]orderModel.Order,
-	userBalance *balanceModel.Balance,
 ) []error {
 	var errorsList []error
 
@@ -68,9 +69,7 @@ func (s *AccrualService) GetAndUpdateAccruals(
 		orderForUpdate.Status = order.Status
 		orderForUpdate.Accrual = &order.Accrual
 
-		userBalance.Current += order.Accrual
-
-		err := s.orderService.UpdateAccrual(ctx, orderForUpdate, *userBalance)
+		err := s.orderService.UpdateAccrual(ctx, userID, orderForUpdate)
 		if err != nil {
 			errorsList = append(errorsList, err)
 		}

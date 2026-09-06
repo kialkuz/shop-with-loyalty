@@ -51,7 +51,6 @@ func NewHandler(
 			orderService,
 			accrualService,
 			userService,
-			balanceService,
 		),
 		Drawal: drawal.NewDrawalHandler(
 			drawalService,

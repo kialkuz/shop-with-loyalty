@@ -52,19 +52,11 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 	}
 
 	if len(ordersForGetAccrual) > 0 {
-		userBalance, err := h.balanceService.GetByUserID(ctx, userID)
-		if err != nil {
-			if !errors.Is(err, pkgErrors.ErrNotFound) {
-				c.Error(err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
-				return
+		accrualErrors := h.accrualService.GetAndUpdateAccruals(ctx, userID, ordersForGetAccrual)
+		if len(accrualErrors) > 0 {
+			for _, accrualError := range accrualErrors {
+				c.Error(accrualError)
 			}
-		}
-
-		accrualErrors := h.accrualService.GetAndUpdateAccruals(ctx, ordersForGetAccrual, userBalance)
-
-		for _, accrualError := range accrualErrors {
-			c.Error(accrualError)
 		}
 
 		rows, err = h.orderService.GetByUserID(ctx, userID)

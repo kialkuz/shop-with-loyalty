@@ -2,7 +2,6 @@ package order
 
 import (
 	"kialkuz/shop-with-loyalty/internal/config"
-	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
 	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
 	userServ "kialkuz/shop-with-loyalty/internal/domain/user/service"
 
@@ -14,7 +13,6 @@ type OrderHandler struct {
 	orderService   *orderServ.OrderService
 	accrualService *orderServ.AccrualService
 	userService    *userServ.UserService
-	balanceService *balanceServ.BalanceService
 }
 
 func NewOrderHandler(
@@ -22,14 +20,12 @@ func NewOrderHandler(
 	orderService *orderServ.OrderService,
 	accrualService *orderServ.AccrualService,
 	userService *userServ.UserService,
-	balanceService *balanceServ.BalanceService,
 ) *OrderHandler {
 	return &OrderHandler{
 		config,
 		orderService,
 		accrualService,
 		userService,
-		balanceService,
 	}
 }
 
