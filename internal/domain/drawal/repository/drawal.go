@@ -59,7 +59,7 @@ func (r *DrawalRepository) GetByUserID(ctx context.Context, userID uuid.UUID) ([
 		o := drawalDto.UserDrawal{}
 
 		if err := rows.Scan(
-			&o.OrderNumber,
+			&o.OrderNumber.Value,
 			&o.Sum,
 			&o.ProcessedAt,
 		); err != nil {

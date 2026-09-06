@@ -1,9 +1,12 @@
 package drawal
 
-import "time"
+import (
+	modelOrder "kialkuz/shop-with-loyalty/internal/domain/order/model"
+	"time"
+)
 
 type UserDrawal struct {
-	OrderNumber string
+	OrderNumber modelOrder.Number
 	Sum         int
 	ProcessedAt time.Time
 }

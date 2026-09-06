@@ -28,7 +28,7 @@ func (h *DrawalHandler) WithDrawals(c *gin.Context) {
 	var drawals []dtoResponce.ViewDrawals
 	for _, row := range rows {
 		drawals = append(drawals, dtoResponce.ViewDrawals{
-			Number:      row.OrderNumber,
+			Number:      row.OrderNumber.Value,
 			Sum:         float64(row.Sum) / 100,
 			ProcessedAt: row.ProcessedAt,
 		})
