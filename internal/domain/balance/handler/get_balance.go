@@ -22,7 +22,7 @@ func (h *BalanceHandler) GetBalance(c *gin.Context) {
 			c.Error(err)
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Errorf("user %v", pkgErrors.ErrNotFound)})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Errorf("user %v", pkgErrors.ErrNotFound.Error())})
 		return
 	}
 

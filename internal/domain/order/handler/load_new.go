@@ -59,15 +59,12 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 	}
 
 	if existOrder != nil {
-		var err error
-
 		if existOrder.IsLoadedByUser(userID) {
-			err = errors.New("order is loaded by this user")
+			c.JSON(http.StatusOK, gin.H{"error": "order is loaded by this user"})
 		} else {
-			err = errors.New("order is loaded by another user")
+			c.JSON(http.StatusConflict, gin.H{"error": "order is loaded by another user"})
 		}
 
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 

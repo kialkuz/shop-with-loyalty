@@ -70,7 +70,7 @@ func run(sugar *zap.SugaredLogger) error {
 
 		err := http.ListenAndServe(":"+config.ServerPort, appServer.Router)
 		if err != nil && err != http.ErrServerClosed {
-			return fmt.Errorf("Failed to start server %s", err)
+			return fmt.Errorf("failed to start server %s", err)
 		}
 
 		return nil
@@ -90,7 +90,7 @@ func run(sugar *zap.SugaredLogger) error {
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		return fmt.Errorf("Server forced to shutdown: %w", err)
+		return fmt.Errorf("server forced to shutdown: %w", err)
 	}
 	sugar.Info("Server gracefully shutdown")
 

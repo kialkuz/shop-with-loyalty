@@ -32,7 +32,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 			c.Error(fmt.Errorf("user not found %v", err))
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrWriteToSupport})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
 		return
 	}
 
@@ -44,7 +44,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		}
 
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
 		return
 	}
 
@@ -53,14 +53,14 @@ func (h *UserHandler) Login(c *gin.Context) {
 	tokenString, err := h.authService.GenerateTokenString(ctx, token, h.config.SecretKey)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
 		return
 	}
 
 	err = h.authService.AddNewToken(ctx, token)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
 		return
 	}
 

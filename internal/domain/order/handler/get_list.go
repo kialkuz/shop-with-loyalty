@@ -25,11 +25,11 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
 			c.Error(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
 			return
 		}
 
-		c.JSON(http.StatusNoContent, gin.H{"error": pkgErrors.ErrEmptyListOrders})
+		c.JSON(http.StatusNoContent, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
 		return
 	}
 
@@ -56,7 +56,7 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 		if err != nil {
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
 				return
 			}
 		}
@@ -71,11 +71,11 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 		if err != nil {
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
 				return
 			}
 
-			c.JSON(http.StatusNoContent, gin.H{"error": pkgErrors.ErrEmptyListOrders})
+			c.JSON(http.StatusNoContent, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
 			return
 		}
 
