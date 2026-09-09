@@ -29,16 +29,16 @@ func GetIncomingParams() (*incomingParams, error) {
 		SecretKey:            defaultSecretKey,
 	}
 
+	err := env.Parse(cfg)
+	if err != nil {
+		return nil, fmt.Errorf("can't parse config from os: %s ", err)
+	}
+
 	flag.StringVar(&cfg.RunAddress, "a", cfg.RunAddress, "Server address")
 	flag.StringVar(&cfg.DatabaseURI, "d", cfg.DatabaseURI, "Database address")
 	flag.StringVar(&cfg.AccrualSystemAddress, "r", cfg.AccrualSystemAddress, "Accrual address")
 	flag.StringVar(&cfg.SecretKey, "k", cfg.SecretKey, "Secret key")
 	flag.Parse()
-
-	err := env.Parse(cfg)
-	if err != nil {
-		return nil, fmt.Errorf("can't parse config from os: %s ", err)
-	}
 
 	return cfg, nil
 }
