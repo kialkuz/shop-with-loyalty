@@ -14,7 +14,6 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -63,36 +62,35 @@ func run(sugar *zap.SugaredLogger) error {
 		Addr:    ":" + config.ServerPort,
 	}
 
-	g := new(errgroup.Group)
+	serverError := make(chan error, 1)
 
-	g.Go(func() error {
+	go func() error {
 		sugar.Info("Server running on port ", config.ServerPort)
 
 		err := http.ListenAndServe(":"+config.ServerPort, appServer.Router)
 		if err != nil && err != http.ErrServerClosed {
-			return fmt.Errorf("failed to start server %s", err)
+			serverError <- fmt.Errorf("failed to start server %s", err)
 		}
 
 		return nil
-	})
-
-	if err := g.Wait(); err != nil {
-		return err
-	}
+	}()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
-	<-stop
+	select {
+	case <-stop:
+		sugar.Info("Shutting down server...")
+		ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 
-	sugar.Info("Shutting down server...")
-	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+		if err := srv.Shutdown(ctx); err != nil {
+			return fmt.Errorf("server forced to shutdown: %w", err)
+		}
+		sugar.Info("Server gracefully shutdown")
 
-	if err := srv.Shutdown(ctx); err != nil {
-		return fmt.Errorf("server forced to shutdown: %w", err)
+		return nil
+	case err := <-serverError:
+		return err
 	}
-	sugar.Info("Server gracefully shutdown")
-
-	return nil
 }

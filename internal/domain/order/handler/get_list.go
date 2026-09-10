@@ -25,7 +25,7 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 	if err != nil {
 		if !errors.Is(err, pkgErrors.ErrNotFound) {
 			c.Error(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{})
 			return
 		}
 
@@ -63,7 +63,7 @@ func (h *OrderHandler) GetList(c *gin.Context) {
 		if err != nil {
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrEmptyListOrders.Error()})
+				c.JSON(http.StatusInternalServerError, gin.H{})
 				return
 			}
 

@@ -53,7 +53,7 @@ func (h *BalanceHandler) WithDraw(c *gin.Context) {
 		}
 
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "withdraw not succeed"})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 

@@ -44,7 +44,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		}
 
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
@@ -53,14 +53,14 @@ func (h *UserHandler) Login(c *gin.Context) {
 	tokenString, err := h.authService.GenerateTokenString(ctx, token, h.config.SecretKey)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
 	err = h.authService.AddNewToken(ctx, token)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 

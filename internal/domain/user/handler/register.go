@@ -30,7 +30,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	isLoginExists, err := h.userService.CheckExistLogin(ctx, req.Login)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
@@ -42,7 +42,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	hashedPassword, err := h.authService.HashPassword(req.Password)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "incorrect password"})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
@@ -56,7 +56,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	tokenString, err := h.authService.GenerateTokenString(ctx, token, h.config.SecretKey)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
@@ -69,7 +69,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	err = h.authService.RegisterAndLogin(ctx, user, token, balance)
 	if err != nil {
 		c.Error(fmt.Errorf("failed to register %v", err))
-		c.JSON(http.StatusInternalServerError, gin.H{"error": pkgErrors.ErrWriteToSupport.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 

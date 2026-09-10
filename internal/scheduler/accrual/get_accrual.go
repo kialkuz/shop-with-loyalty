@@ -79,7 +79,7 @@ func (sh *AccrualScheduler) GetList(ctx context.Context) {
 		for i := 0; i < numJobs; i++ {
 			orderAccrual := <-results
 			if orderAccrual.Err != nil {
-				sh.sugar.Error(err)
+				sh.sugar.Error(orderAccrual.Err)
 				return
 			}
 
@@ -151,13 +151,15 @@ func (sh *AccrualScheduler) getByOrderNumber(
 					return
 				}
 			} else {
+				select {
 				// Для горутины с таймером ждем, пока время ожидания внешнего сервиса пройдет
 				// и освобождаем все остальные горутины
-				select {
 				case <-timer.C:
+					sh.m.Lock()
 					locked = false
 					atomic.StoreInt64(&needRetryAddr, 0)
 					c.Broadcast()
+					sh.m.Unlock()
 				case <-ctx.Done():
 					timer.Stop()
 					c.Broadcast()
@@ -190,9 +192,10 @@ func (sh *AccrualScheduler) getByOrderNumber(
 			}
 			return
 		}
-		defer resp.Body.Close()
 
 		if resp.StatusCode == http.StatusTooManyRequests {
+			resp.Body.Close()
+
 			retryNum, err = strconv.Atoi(resp.Header.Get("Retry-After"))
 			if err != nil {
 				results <- accrualDto.GetAccrual{
@@ -204,6 +207,8 @@ func (sh *AccrualScheduler) getByOrderNumber(
 			atomic.CompareAndSwapInt64(&needRetryAddr, 0, 1)
 			continue
 		}
+
+		defer resp.Body.Close()
 
 		var orderAccrual accrualDto.GetAccrual
 

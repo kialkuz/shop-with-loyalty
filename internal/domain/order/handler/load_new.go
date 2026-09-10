@@ -54,7 +54,7 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 	existOrder, err := h.orderService.GetByNumber(ctx, newOrder.Number.Value)
 	if err != nil && !errors.Is(err, pkgErrors.ErrNotFound) {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
@@ -71,7 +71,7 @@ func (h *OrderHandler) LoadNew(c *gin.Context) {
 	err = h.orderService.Add(ctx, newOrder)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 
