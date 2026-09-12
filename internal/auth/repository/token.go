@@ -24,7 +24,7 @@ func (r *TokenRepository) AddNewToken(
 ) error {
 	return r.db.Exec(
 		ctx,
-		"INSERT INTO active_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
+		"INSERT INTO user_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
 		token.Jti,
 		token.UserID,
 		token.IssuedAt,
@@ -42,7 +42,7 @@ func (r *TokenRepository) GetTokenByJti(ctx context.Context, jti uuid.UUID) (*mo
 			&token.ExpiresAt,
 		)
 	}, `SELECT jti, user_id, issued_at, expires_at
-		FROM active_tokens
+		FROM user_tokens
 		WHERE jti = $1`,
 		jti,
 	)
@@ -58,7 +58,7 @@ func (r *TokenRepository) GetTokenByJti(ctx context.Context, jti uuid.UUID) (*mo
 func (r *TokenRepository) AddTx(ctx context.Context, tx pgx.Tx, token model.Token) error {
 	_, err := tx.Exec(
 		ctx,
-		"INSERT INTO active_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
+		"INSERT INTO user_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
 		token.Jti,
 		token.UserID,
 		token.IssuedAt,

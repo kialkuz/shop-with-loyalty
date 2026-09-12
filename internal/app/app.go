@@ -3,19 +3,20 @@ package app
 import (
 	"context"
 
-	authRepository "kialkuz/shop-with-loyalty/internal/auth/repository"
-	authServ "kialkuz/shop-with-loyalty/internal/auth/service"
+	tokenRepository "kialkuz/shop-with-loyalty/internal/auth/repository"
+	tokenServ "kialkuz/shop-with-loyalty/internal/auth/service"
 	"kialkuz/shop-with-loyalty/internal/config"
-	balanceRepository "kialkuz/shop-with-loyalty/internal/domain/balance/repository"
-	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
-	drawalRepository "kialkuz/shop-with-loyalty/internal/domain/drawal/repository"
-	drawalServ "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
-	orderRepo "kialkuz/shop-with-loyalty/internal/domain/order/repository"
-	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
-	userRepository "kialkuz/shop-with-loyalty/internal/domain/user/repository"
-	userServ "kialkuz/shop-with-loyalty/internal/domain/user/service"
 	"kialkuz/shop-with-loyalty/internal/infrastructure"
 	"kialkuz/shop-with-loyalty/internal/middleware"
+	accrualServ "kialkuz/shop-with-loyalty/internal/modules/accrual/service"
+	balanceRepository "kialkuz/shop-with-loyalty/internal/modules/balance/repository"
+	balanceServ "kialkuz/shop-with-loyalty/internal/modules/balance/service"
+	drawalRepository "kialkuz/shop-with-loyalty/internal/modules/drawal/repository"
+	drawalServ "kialkuz/shop-with-loyalty/internal/modules/drawal/service"
+	orderRepo "kialkuz/shop-with-loyalty/internal/modules/order/repository"
+	orderServ "kialkuz/shop-with-loyalty/internal/modules/order/service"
+	userRepository "kialkuz/shop-with-loyalty/internal/modules/user/repository"
+	userServ "kialkuz/shop-with-loyalty/internal/modules/user/service"
 	"kialkuz/shop-with-loyalty/internal/router"
 	"kialkuz/shop-with-loyalty/internal/scheduler"
 
@@ -38,36 +39,17 @@ func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, c
 
 	transactionManager := infrastructure.NewTransactionManager(pool)
 
-	tokenService := authServ.NewTokenService(authRepository.NewTokenRepository(dbStorage))
+	tokenService := tokenServ.NewTokenService(tokenRepository.NewTokenRepository(dbStorage))
 	userService := userServ.NewUserService(userRepository.NewUserRepository(dbStorage))
 	balanceService := balanceServ.NewBalanceService(balanceRepository.NewBalanceRepository(dbStorage))
 	drawalService := drawalServ.NewDrawalService(drawalRepository.NewDrawalRepository(dbStorage))
-
-	authService := authServ.NewAuthService(
-		tokenService,
-		userService,
-		balanceService,
-		transactionManager,
-	)
-
-	orderRepository := orderRepo.NewOrderRepository(dbStorage)
-
-	orderService := orderServ.NewOrderService(
-		transactionManager,
-		orderRepository,
-		balanceService,
-		drawalService,
-	)
-
-	accrualService := orderServ.NewAccrualService(
-		config.AccrualSystemAddress,
-		transactionManager,
-		orderService,
-	)
+	orderService := orderServ.NewOrderService(orderRepo.NewOrderRepository(dbStorage))
+	accrualService := accrualServ.NewAccrualService(config.AccrualSystemAddress)
 
 	appHandler := NewHandler(
 		config,
-		authService,
+		transactionManager,
+		tokenService,
 		balanceService,
 		orderService,
 		userService,
@@ -81,10 +63,11 @@ func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, c
 		transactionManager,
 		orderService,
 		balanceService,
+		accrualService,
 	)
 
 	return &App{
-		Router:          getRouter(appHandler, sugar, authService, config.SecretKey),
+		Router:          getRouter(appHandler, sugar, tokenService, config.SecretKey),
 		Pool:            pool,
 		SchedulerRunner: schedulerRunner,
 	}, nil
@@ -93,7 +76,7 @@ func NewApp(ctx context.Context, pool *pgxpool.Pool, sugar *zap.SugaredLogger, c
 func getRouter(
 	appHandler *Handler,
 	sugar *zap.SugaredLogger,
-	authService *authServ.AuthService,
+	tokenService *tokenServ.TokenService,
 	secretKey string,
 ) *gin.Engine {
 	return router.Init(
@@ -106,6 +89,6 @@ func getRouter(
 			appHandler.Drawal,
 		},
 		sugar,
-		middleware.WithAuth(authService, secretKey),
+		middleware.WithAuth(tokenService, secretKey),
 	)
 }

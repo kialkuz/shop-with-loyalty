@@ -2,9 +2,11 @@ package scheduler
 
 import (
 	"kialkuz/shop-with-loyalty/internal/config"
-	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
-	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
 	"kialkuz/shop-with-loyalty/internal/infrastructure"
+	accrualServ "kialkuz/shop-with-loyalty/internal/modules/accrual/service"
+	accrualUsecase "kialkuz/shop-with-loyalty/internal/modules/accrual/usecase"
+	balanceServ "kialkuz/shop-with-loyalty/internal/modules/balance/service"
+	orderServ "kialkuz/shop-with-loyalty/internal/modules/order/service"
 	"kialkuz/shop-with-loyalty/internal/scheduler/accrual"
 
 	"go.uber.org/zap"
@@ -14,12 +16,15 @@ func New(
 	config *config.Config,
 	sugar *zap.SugaredLogger,
 	transactionManager infrastructure.Transaction,
-	ordersService *orderServ.OrderService,
+	orderService *orderServ.OrderService,
 	balanceService *balanceServ.BalanceService,
+	accrualService *accrualServ.AccrualService,
 ) *Runner {
-	jobs := []Job{
-		accrual.New(config, sugar, transactionManager, ordersService, balanceService),
+	usecaseAddAccrual := accrualUsecase.NewAddAccrualUseCase(transactionManager, orderService, balanceService)
+
+	accrualJobs := []Job{
+		accrual.New(config, sugar, orderService, accrualService, usecaseAddAccrual),
 	}
 
-	return NewRunner(jobs)
+	return NewRunner(accrualJobs)
 }

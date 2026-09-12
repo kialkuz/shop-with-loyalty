@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"errors"
-	authService "kialkuz/shop-with-loyalty/internal/auth/service"
+	tokenServ "kialkuz/shop-with-loyalty/internal/auth/service"
 	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
 	"net/http"
 	"strings"
@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func WithAuth(authService *authService.AuthService, secretKey string) gin.HandlerFunc {
+func WithAuth(tokenService *tokenServ.TokenService, secretKey string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
@@ -37,7 +37,7 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 
 		tokenString := parts[1]
 
-		claims, err := authService.ParseTokenString(tokenString, secretKey)
+		claims, err := tokenService.ParseTokenString(tokenString, secretKey)
 		if err != nil {
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)
@@ -47,7 +47,7 @@ func WithAuth(authService *authService.AuthService, secretKey string) gin.Handle
 			return
 		}
 
-		mToken, err := authService.GetTokenByJti(ctx, claims.Jti)
+		mToken, err := tokenService.GetTokenByJti(ctx, claims.Jti)
 		if err != nil {
 			if !errors.Is(err, pkgErrors.ErrNotFound) {
 				c.Error(err)

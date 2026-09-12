@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE active_tokens (
+CREATE TABLE user_tokens (
     jti uuid,
     user_id uuid NOT NULL,
     issued_at timestamp with time zone DEFAULT NOW(),
@@ -16,7 +16,7 @@ CREATE TABLE active_tokens (
 	PRIMARY KEY (jti),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-CREATE INDEX active_tokens_user_id_idx ON public.active_tokens USING btree (user_id);
+CREATE INDEX user_tokens_user_id_idx ON public.user_tokens USING btree (user_id);
 
 CREATE TABLE IF NOT EXISTS public.balance (
 	id uuid NOT NULL,
@@ -54,7 +54,7 @@ CREATE INDEX drawals_user_id_idx ON public.drawals USING btree (user_id);
 -- +goose Down
 SELECT 'down SQL query';
 
-DROP TABLE IF EXISTS public.active_tokens;
+DROP TABLE IF EXISTS public.user_tokens;
 DROP TABLE IF EXISTS public.balance;
 DROP TABLE IF EXISTS public.orders;
 DROP TABLE IF EXISTS public.drawals;

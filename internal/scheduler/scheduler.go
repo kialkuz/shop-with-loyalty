@@ -12,8 +12,14 @@ type Runner struct {
 	jobs []Job
 }
 
-func NewRunner(jobs []Job) *Runner {
-	return &Runner{jobs: jobs}
+func NewRunner(jobs ...[]Job) *Runner {
+	var all []Job
+
+	for _, job := range jobs {
+		all = append(all, job...)
+	}
+
+	return &Runner{jobs: all}
 }
 
 func (r *Runner) Run(ctx context.Context) {

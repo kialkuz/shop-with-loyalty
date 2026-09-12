@@ -2,16 +2,21 @@ package app
 
 import (
 	"kialkuz/shop-with-loyalty/internal/config"
-	balance "kialkuz/shop-with-loyalty/internal/domain/balance/handler"
-	drawal "kialkuz/shop-with-loyalty/internal/domain/drawal/handler"
-	order "kialkuz/shop-with-loyalty/internal/domain/order/handler"
-	user "kialkuz/shop-with-loyalty/internal/domain/user/handler"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
+	balance "kialkuz/shop-with-loyalty/internal/modules/balance/handler"
+	drawal "kialkuz/shop-with-loyalty/internal/modules/drawal/handler"
+	order "kialkuz/shop-with-loyalty/internal/modules/order/handler"
+	user "kialkuz/shop-with-loyalty/internal/modules/user/handler"
 
-	authServ "kialkuz/shop-with-loyalty/internal/auth/service"
-	balanceServ "kialkuz/shop-with-loyalty/internal/domain/balance/service"
-	drawalServ "kialkuz/shop-with-loyalty/internal/domain/drawal/service"
-	orderServ "kialkuz/shop-with-loyalty/internal/domain/order/service"
-	userServ "kialkuz/shop-with-loyalty/internal/domain/user/service"
+	tokenServ "kialkuz/shop-with-loyalty/internal/auth/service"
+	accrualServ "kialkuz/shop-with-loyalty/internal/modules/accrual/service"
+	accrualUsecase "kialkuz/shop-with-loyalty/internal/modules/accrual/usecase"
+	balanceServ "kialkuz/shop-with-loyalty/internal/modules/balance/service"
+	balanceUsecase "kialkuz/shop-with-loyalty/internal/modules/balance/usecase"
+	drawalServ "kialkuz/shop-with-loyalty/internal/modules/drawal/service"
+	orderServ "kialkuz/shop-with-loyalty/internal/modules/order/service"
+	userServ "kialkuz/shop-with-loyalty/internal/modules/user/service"
+	userUsecase "kialkuz/shop-with-loyalty/internal/modules/user/usecase"
 
 	"kialkuz/shop-with-loyalty/pkg/validator"
 )
@@ -25,32 +30,36 @@ type Handler struct {
 
 func NewHandler(
 	config *config.Config,
-	authService *authServ.AuthService,
+	transactionManager infrastructure.Transaction,
+	tokenService *tokenServ.TokenService,
 	balanceService *balanceServ.BalanceService,
 	orderService *orderServ.OrderService,
 	userService *userServ.UserService,
 	drawalService *drawalServ.DrawalService,
-	accrualService *orderServ.AccrualService,
+	accrualService *accrualServ.AccrualService,
 ) *Handler {
 	v := validator.NewValidator()
 
 	return &Handler{
-		User: user.NewAuthHandler(
-			authService,
-			userService,
-			v,
+		User: user.NewUserHandler(
 			config,
+			v,
+			userService,
+			tokenService,
+			userUsecase.NewRegisterAndLoginUseCase(userService, tokenService, balanceService, transactionManager),
 		),
 		Balance: balance.NewBalanceHandler(
 			v,
 			orderService,
 			balanceService,
+			balanceUsecase.NewWithDrawUseCase(transactionManager, drawalService, balanceService),
 		),
 		Order: order.NewOrderHandler(
 			config,
 			orderService,
 			accrualService,
 			userService,
+			accrualUsecase.NewAddAccrualUseCase(transactionManager, orderService, balanceService),
 		),
 		Drawal: drawal.NewDrawalHandler(
 			drawalService,
