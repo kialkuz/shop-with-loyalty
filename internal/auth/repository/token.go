@@ -1,0 +1,69 @@
+package repository
+
+import (
+	"context"
+	"kialkuz/shop-with-loyalty/internal/auth/model"
+	"kialkuz/shop-with-loyalty/internal/infrastructure"
+	pkgErrors "kialkuz/shop-with-loyalty/pkg/errors"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+)
+
+type TokenRepository struct {
+	db *infrastructure.DB
+}
+
+func NewTokenRepository(db *infrastructure.DB) *TokenRepository {
+	return &TokenRepository{db: db}
+}
+
+func (r *TokenRepository) AddNewToken(
+	ctx context.Context,
+	token model.Token,
+) error {
+	return r.db.Exec(
+		ctx,
+		"INSERT INTO user_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
+		token.Jti,
+		token.UserID,
+		token.IssuedAt,
+		token.ExpiresAt,
+	)
+}
+
+func (r *TokenRepository) GetTokenByJti(ctx context.Context, jti uuid.UUID) (*model.Token, error) {
+	token := &model.Token{}
+	err := r.db.QueryRow(ctx, func(row pgx.Row) error {
+		return row.Scan(
+			&token.Jti,
+			&token.UserID,
+			&token.IssuedAt,
+			&token.ExpiresAt,
+		)
+	}, `SELECT jti, user_id, issued_at, expires_at
+		FROM user_tokens
+		WHERE jti = $1`,
+		jti,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, pkgErrors.ErrNotFound
+		}
+		return nil, err
+	}
+	return token, nil
+}
+
+func (r *TokenRepository) AddTx(ctx context.Context, tx pgx.Tx, token model.Token) error {
+	_, err := tx.Exec(
+		ctx,
+		"INSERT INTO user_tokens (jti, user_id, issued_at, expires_at) VALUES ($1, $2, $3, $4)",
+		token.Jti,
+		token.UserID,
+		token.IssuedAt,
+		token.ExpiresAt,
+	)
+
+	return err
+}
