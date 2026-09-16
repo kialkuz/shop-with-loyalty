@@ -51,6 +51,8 @@ func run(sugar *zap.SugaredLogger) error {
 		return nil
 	}
 
+	appServer.SchedulerRunner.Run(ctx)
+
 	defer func() {
 		if appServer.Pool != nil {
 			appServer.Pool.Close()
