@@ -1,0 +1,120 @@
+register:
+  post:
+    tags:
+      - User
+
+    summary: Register a new user
+
+    description: |
+      Registers a new user and returns an access token
+      in the Authorization response header.
+
+    operationId: registerUser
+
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/AuthUser'
+          example:
+            login: "john_doe"
+            password: "secret123"
+
+    responses:
+      '200':
+        description: User successfully registered
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: JWT token.
+                  example: "eyJhbGciOiJIUzI1NiIs..."
+
+      '400':
+        description: Invalid request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: validation failed
+
+      '409':
+        description: Login is already in use
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: login is busy
+
+      '500':
+        description: Internal server error
+
+login:
+  post:
+    tags:
+      - User
+
+    summary: Authenticate user
+
+    description: |
+      Authenticates a user and returns an access token
+      in the Authorization response header.
+
+    operationId: loginUser
+
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/auth.yaml#/AuthUser'
+          example:
+            login: "john_doe"
+            password: "secret123"
+
+    responses:
+      '200':
+        description: User successfully authenticated
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: JWT token.
+                  example: "eyJhbGciOiJIUzI1NiIs..."
+
+      '400':
+        description: Invalid request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: validation failed
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            examples:
+              userNotFound:
+                summary: User not found
+                value:
+                  error: write to support
+              invalidPassword:
+                summary: Invalid password
+                value:
+                  error: invalid_password
+
+      '500':
+        description: Internal server error

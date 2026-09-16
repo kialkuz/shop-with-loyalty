@@ -1,0 +1,33 @@
+Order:
+  type: object
+  required:
+    - number
+    - status
+    - uploadedAt
+  properties:
+    number:
+      type: string
+      description: Order number.
+      example: "12345678903"
+
+    status:
+      type: string
+      description: Current order processing status.
+      enum:
+        - NEW
+        - PROCESSING
+        - INVALID
+        - PROCESSED
+      example: PROCESSED
+
+    accrual:
+      type: integer
+      nullable: true
+      description: Amount of loyalty points accrued for the order.
+      example: 500
+
+    uploadedAt:
+      type: string
+      format: date-time
+      description: Date and time when the order was uploaded.
+      example: "2026-09-15T10:30:00Z"

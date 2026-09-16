@@ -1,0 +1,17 @@
+ViewBalance:
+  type: object
+  required:
+    - current
+    - withdrawn
+  properties:
+    current:
+      type: number
+      format: double
+      description: Current balance available to the user.
+      example: 100.50
+
+    withdrawn:
+      type: number
+      format: double
+      description: Total amount withdrawn by the user.
+      example: 20.00

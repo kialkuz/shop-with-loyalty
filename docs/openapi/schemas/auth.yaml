@@ -1,0 +1,20 @@
+AuthUser:
+  type: object
+  required:
+    - login
+    - password
+  properties:
+    login:
+      type: string
+      minLength: 4
+      maxLength: 50
+      description: User login.
+      example: "john_doe"
+
+    password:
+      type: string
+      format: password
+      minLength: 5
+      maxLength: 60
+      description: User password.
+      example: "secret123"
