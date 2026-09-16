@@ -23,6 +23,9 @@ func Init(
 ) *gin.Engine {
 	router := gin.New()
 
+	router.Static("/swagger", "./web/swagger")
+	router.Static("/openapi", "./docs/openapi")
+
 	router.Use(middleware.WithLogging(sugar))
 
 	api := router.Group("/api")

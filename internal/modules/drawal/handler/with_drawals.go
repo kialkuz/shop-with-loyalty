@@ -21,7 +21,7 @@ func (h *DrawalHandler) WithDrawals(c *gin.Context) {
 			c.Error(err)
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "error get configuration: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 		return
 	}
 

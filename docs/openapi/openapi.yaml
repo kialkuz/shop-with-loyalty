@@ -1,0 +1,72 @@
+openapi: 3.2.0
+
+info:
+  title: Shop with Loyalty API
+  description: REST API for loyalty system
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Balance
+    description: Operations related to user balance
+
+  - name: Orders
+    description: Operations related to user orders
+
+  - name: Withdrawals
+    description: Operations related to user withdrawals
+
+  - name: User
+    description: Operations related to user authentication
+
+paths:
+  /api/user/balance:
+    $ref: './paths/balance.yaml#/getBalance'
+
+  /api/user/balance/withdraw:
+    $ref: './paths/balance.yaml#/withdrawBalance'
+
+  /api/user/withdrawals:
+    $ref: './paths/withdrawals.yaml#/getWithdrawals'
+
+  /api/user/orders:
+    $ref: './paths/orders.yaml#/orders'
+
+  /api/user/register:
+    $ref: './paths/user.yaml#/register'
+
+  /api/user/login:
+    $ref: './paths/user.yaml#/login'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT access token.
+        The token must be provided using the following HTTP header:
+        Authorization: Bearer <token>
+
+  schemas:
+    ViewBalance:
+      $ref: './schemas/balance.yaml#/ViewBalance'
+
+    WithDraw:
+      $ref: './schemas/withdraw.yaml#/WithDraw'
+
+    Order:
+      $ref: './schemas/order.yaml#/Order'
+
+    ViewDrawals:
+      $ref: './schemas/drawal.yaml#/ViewDrawals'
+
+    AuthUser:
+      $ref: './schemas/auth.yaml#/AuthUser'
+
+    Error:
+      $ref: './schemas/error.yaml#/Error'

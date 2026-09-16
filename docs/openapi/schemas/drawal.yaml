@@ -1,0 +1,23 @@
+ViewDrawals:
+  type: object
+  required:
+    - order
+    - sum
+    - processed_at
+  properties:
+    order:
+      type: string
+      description: Order number associated with the withdrawal.
+      example: "12345678903"
+
+    sum:
+      type: number
+      format: double
+      description: Amount withdrawn from the user's balance.
+      example: 100.50
+
+    processed_at:
+      type: string
+      format: date-time
+      description: Date and time when the withdrawal was processed.
+      example: "2026-09-15T10:30:00Z"

@@ -1,0 +1,104 @@
+getBalance:
+  get:
+    tags:
+      - Balance
+
+    summary: Get user balance
+
+    description: |
+      Returns the current balance and the total amount withdrawn
+      for the authenticated user.
+
+    operationId: getBalance
+
+    security:
+      - bearerAuth: []
+
+    responses:
+      '200':
+        description: User balance
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/balance.yaml#/ViewBalance'
+            example:
+              current: 100.50
+              withdrawn: 20.00
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: user not found
+
+withdrawBalance:
+  post:
+    tags:
+      - Balance
+
+    summary: Withdraw points
+
+    description: |
+      Withdraws loyalty points from the authenticated user's balance
+      for the specified order.
+
+    operationId: withdrawBalance
+
+    security:
+      - bearerAuth: []
+
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/withdraw.yaml#/WithDraw'
+          example:
+            order: "12345678903"
+            sum: 100.50
+
+    responses:
+      '200':
+        description: Points successfully withdrawn
+
+      '400':
+        description: Invalid request
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: invalid request
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: user not found
+
+      '402':
+        description: Insufficient balance
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: insufficient balance
+
+      '422':
+        description: Invalid order number format
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/error.yaml#/Error'
+            example:
+              error: invalid order number format
+
+      '500':
+        description: Internal server error

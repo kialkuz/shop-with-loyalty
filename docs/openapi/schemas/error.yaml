@@ -1,0 +1,9 @@
+Error:
+  type: object
+  required:
+    - error
+  properties:
+    error:
+      type: string
+      description: Error message.
+      example: authorization is not valid

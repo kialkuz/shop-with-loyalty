@@ -74,6 +74,5 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	c.Header("Authorization", "Bearer "+tokenString)
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 }
